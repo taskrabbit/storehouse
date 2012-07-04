@@ -4,15 +4,17 @@ module Storehouse
     attr_accessor :adapter_options
     attr_accessor :except
     attr_accessor :only
-    attr_accessor :hook_controllers
 
     def hook_controllers!
-      ActionController::Base.extend Storehouse::Expiration
+      ActionController::Base.extend Storehouse::Controller
     end
 
     def reset!
+      self.adapter = nil
+      self.adapter_options = nil
       self.except = []
       self.only = []
+      Storehouse.reset_data_store!
     end
 
     def except!(*paths)

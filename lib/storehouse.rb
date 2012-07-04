@@ -3,7 +3,7 @@ module Storehouse
   autoload :VERSION, 'storehouse/version'
   autoload :Config, 'storehouse/config'
   autoload :Middleware, 'storehouse/middleware'
-  autoload :Expiration, 'storehouse/expiration'
+  autoload :Controller, 'storehouse/controller'
 
   module Adapter
     autoload :Base, 'storehouse/adapter/base'

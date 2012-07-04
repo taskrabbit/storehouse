@@ -10,7 +10,7 @@ describe 'ActionController integration' do
   end
 
   it 'should integrate with ActionController when told to' do
-    ActionController::Base.should_receive(:extend).with(Storehouse::Expiration).once
+    ActionController::Base.should_receive(:extend).with(Storehouse::Controller).once
     hook!
   end
 
@@ -41,6 +41,6 @@ describe 'ActionController integration' do
       Storehouse.config.consider_caching?('/users').should be_false
       ActionController::Base.expire_page('/users')
     end
-    
+
   end
 end
