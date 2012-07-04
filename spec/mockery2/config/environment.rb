@@ -8,7 +8,7 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
 
-  config.middleware.use 'Storehouse::Middleware', 'Base', {}
+  config.middleware.use 'Storehouse::Middleware'
 
   config.time_zone = 'UTC'
 end

@@ -14,9 +14,12 @@ def get_storehouse_middleware
 end
 
 def use_middleware_adapter!(name, options = {})
-  mid = get_storehouse_middleware
-  mid.args[0] = name
-  mid.args[1] = options
+  Storehouse.reset_data_store!
+  Storehouse.configure do |c|
+    c.adapter = name
+    c.adapter_options = options
+  end
+  Storehouse.data_store
 end
 
 

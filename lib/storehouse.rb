@@ -3,6 +3,7 @@ module Storehouse
   autoload :VERSION, 'storehouse/version'
   autoload :Config, 'storehouse/config'
   autoload :Middleware, 'storehouse/middleware'
+  autoload :Expiration, 'storehouse/expiration'
 
   module Adapter
     autoload :Base, 'storehouse/adapter/base'
@@ -14,12 +15,16 @@ module Storehouse
     cattr_accessor :config
     cattr_accessor :store
 
-    delegate :read, :write, :to => :data_store, :allow_nil => true
+    delegate :read, :write, :delete, :to => :data_store, :allow_nil => true
 
     def configure
       self.config ||= ::Storehouse::Config.new
       yield self.config if block_given?
       self.config
+    end
+
+    def reset_data_store!
+      self.store = nil
     end
 
     def data_store

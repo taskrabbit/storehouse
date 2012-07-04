@@ -6,14 +6,13 @@ describe 'Rails integration for testing' do
     get_storehouse_middleware.should_not be_blank
   end
 
-  it 'should have set up the middleware with the default options' do
-    mid = get_storehouse_middleware
-    mid.args.first.should eql('Base')
+  it 'should use the default adapter' do
+    Storehouse.data_store.class.name.should eql('Storehouse::Adapter::Base')
   end
 
   it 'should be able to change the adapter' do
     use_middleware_adapter!('Dalli')
-    get_storehouse_middleware.args.first.should eql('Dalli')
+    Storehouse.data_store.class.name.should eql('Storehouse::Adapter::Dalli')
   end
 
 end

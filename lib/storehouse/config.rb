@@ -4,6 +4,27 @@ module Storehouse
     attr_accessor :adapter_options
     attr_accessor :except
     attr_accessor :only
+    attr_accessor :hook_controllers
+
+    def hook_controllers!
+      ActionController::Base.extend Storehouse::Expiration
+    end
+
+    def reset!
+      self.except = []
+      self.only = []
+    end
+
+    def except!(*paths)
+      self.except ||= []
+      self.except |= paths
+    end
+    alias_method :ignore!, :except!
+
+    def only!(*paths)
+      self.only ||= []
+      self.only |= paths
+    end
 
     def consider_caching?(path)
 
