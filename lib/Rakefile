@@ -1,3 +1,0 @@
-task :spec do
-  system('rvm ree@mockery2 -S bundle exec rspec')
-end
