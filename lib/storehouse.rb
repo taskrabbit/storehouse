@@ -7,6 +7,7 @@ module Storehouse
 
   module Adapter
     autoload :Base, 'storehouse/adapter/base'
+    autoload :Memcache, 'storehouse/adapter/memcache'
     autoload :Dalli, 'storehouse/adapter/dalli'
   end
 
@@ -29,8 +30,8 @@ module Storehouse
 
     def data_store
       self.store ||= begin
-        class_name = (self.config.adapter || 'Base').to_s.classify
-        "Storehouse::Adapter::#{class_name}".constantize.new(self.config.adapter_options || {})
+        class_name = (self.config.try(:adapter) || 'Base').to_s.classify
+        "Storehouse::Adapter::#{class_name}".constantize.new(self.config.try(:adapter_options) || {})
       end
     end
   end
