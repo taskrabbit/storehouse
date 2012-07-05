@@ -973,3 +973,247 @@ Processing UsersController#index (for 127.0.0.1 at 2012-07-03 16:43:58) [GET]
 Rendering users/index
 Completed in 4ms (View: 1, DB: 0) | 200 OK [http://localhost/users]
 Dalli::Server#connect localhost:11211
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:02:37) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 5ms (View: 3, DB: 0) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:03:47) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 3, DB: 0) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:04:03) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 3, DB: 0) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:04:38) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 2, DB: 0) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:05:33) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 2, DB: 0) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:05:54) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 2, DB: 0) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:07:39) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 5ms (View: 2, DB: 0) | 200 OK [http://test.host/users/2]
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:08:08) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 2, DB: 0) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:08:19) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 2, DB: 0) | 200 OK [http://test.host/users/2]
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:08:26) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 5ms (View: 2, DB: 0) | 200 OK [http://test.host/users/2]
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:08:46) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:09:05) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:09:54) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 3, DB: 0) | 200 OK [http://test.host/users/2]
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#account (for 0.0.0.0 at 2012-07-04 21:10:07) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/account
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.4ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:13:55) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 3, DB: 1) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#account (for 0.0.0.0 at 2012-07-04 21:13:55) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/account
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:15:47) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 3, DB: 0) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.1ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#account (for 0.0.0.0 at 2012-07-04 21:15:47) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/account
+Cached page: /users/2/account.html (0.7ms)
+Completed in 4ms (View: 2, DB: 0) | 200 OK [http://test.host/users/2/account]
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.5ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:17:37) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 3, DB: 1) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.1ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#account (for 0.0.0.0 at 2012-07-04 21:17:37) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/account
+Completed in 3ms (View: 2, DB: 0) | 200 OK [http://test.host/users/2/account]
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:17:58) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 3, DB: 0) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.1ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#account (for 0.0.0.0 at 2012-07-04 21:17:58) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/account
+Completed in 3ms (View: 2, DB: 0) | 200 OK [http://test.host/users/2/account]
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:20:37) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 3, DB: 0) | 200 OK [http://test.host/users/2]
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+Expired page: /users.html (0.0ms)
+  [4;36;1mUser Load (0.3ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#show (for 0.0.0.0 at 2012-07-04 21:21:00) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/show
+Completed in 4ms (View: 3, DB: 0) | 200 OK [http://test.host/users/2]
+  [4;36;1mUser Load (0.1ms)[0m   [0;1mSELECT * FROM "users" ORDER BY users.id DESC LIMIT 1[0m
+
+
+Processing UsersController#account (for 0.0.0.0 at 2012-07-04 21:21:00) [GET]
+  Parameters: {"id"=>#<User id: 2, first_name: "Don", last_name: "Rogers", created_at: "2012-07-03 21:49:33", updated_at: "2012-07-03 21:49:33">}
+  [4;35;1mUser Load (0.1ms)[0m   [0mSELECT * FROM "users" WHERE ("users"."id" = 2) [0m
+Rendering users/account
+Cached page: /users/2/account.html (0.2ms)
+Completed in 3ms (View: 2, DB: 0) | 200 OK [http://test.host/users/2/account]

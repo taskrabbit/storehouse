@@ -4,6 +4,7 @@ module Storehouse
     attr_accessor :adapter_options
     attr_accessor :except
     attr_accessor :only
+    attr_accessor :continue_writing_filesystem
 
     def hook_controllers!
       ActionController::Base.extend Storehouse::Controller

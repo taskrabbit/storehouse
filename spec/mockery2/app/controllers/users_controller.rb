@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  caches_page :index, :show
+  caches_page :index, :show, :account
 
   def index
     @users = User.all
@@ -12,7 +12,7 @@ class UsersController < ApplicationController
 
   def account
     @user = User.find(params[:id])
-    
+
   end
 
 end

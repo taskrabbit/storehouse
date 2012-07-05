@@ -18,7 +18,7 @@ describe 'ActionController integration' do
 
     before do
       hook!
-      Storehouse.data_store.should_receive(:delete).with('/users').once
+      Storehouse.data_store.should_receive(:delete).with('/users')
     end
 
     it 'should invoke the data_store when expiring a path' do

@@ -9,6 +9,6 @@ group :development, :test do
 
   gem 'sqlite3'
   gem 'dalli', '~> 1.0.4'
-
-  gem 'rspec'
+  
+  gem 'rspec-rails', "#{ENV['rspec_rails_version_for_test_suite'] || '1.3.4'}"
 end

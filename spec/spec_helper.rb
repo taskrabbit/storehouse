@@ -5,7 +5,10 @@
 #
 
 rails_version = ENV['RAILS_VERSION'] || 2
+
 ENV['rails_version_for_test_suite'] = (rails_version == 2 ? '2.3.14' : '3.2')
+ENV['rspec_rails_version_for_test_suite'] = (rails_version == 2 ? '1.3.4' : '2.10.1')
+
 require "mockery#{rails_version}/config/#{rails_version == 2 ? 'environment' : 'application'}.rb"
 
 
@@ -23,9 +26,17 @@ def use_middleware_adapter!(name, options = {})
 end
 
 
-# See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-RSpec.configure do |config|
-  config.treat_symbols_as_metadata_keys_with_true_values = true
-  config.run_all_when_everything_filtered = true
-  config.filter_run :focus
+if rails_version == 2
+  require 'spec/rails'
+  Spec::Runner.configure do |config|
+
+  end
+else 
+  require 'rspec/rails'
+  # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+  RSpec.configure do |config|
+    config.treat_symbols_as_metadata_keys_with_true_values = true
+    config.run_all_when_everything_filtered = true
+    config.filter_run :focus
+  end
 end
