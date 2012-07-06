@@ -25,12 +25,18 @@ def use_middleware_adapter!(name, options = {})
   Storehouse.data_store
 end
 
+def reset
+  Storehouse.config.reset!
+  dir = Rails.root.join('public', 'cache')
+  system("rm -r #{dir}") if File.exists?(dir)
+end
+
 
 if rails_version == 2
   require 'spec/rails'
   Spec::Runner.configure do |config|
     config.before do
-      Storehouse.config.reset!
+      reset()
     end
   end
 else 
@@ -42,7 +48,7 @@ else
     config.filter_run :focus
 
     config.before do
-      Storehouse.config.reset!
+      reset()
     end
 
   end
