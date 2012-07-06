@@ -117,6 +117,7 @@ describe Storehouse::Config do
 
     conf.distribute?('/tos').should be_true
     conf.distribute?('/page').should be_false
+
   end
 
 

@@ -4,37 +4,39 @@
 # loaded once.
 #
 
-rails_version = ENV['RAILS_VERSION'] || 2
+rails_version = ENV['RAILS_VERSION'] || '2'
+ENV['RAILS_VERSION'] = rails_version.to_s
 
-ENV['rails_version_for_test_suite'] = (rails_version == 2 ? '2.3.14' : '3.2')
-ENV['rspec_rails_version_for_test_suite'] = (rails_version == 2 ? '1.3.4' : '2.10.1')
-
-require "mockery#{rails_version}/config/#{rails_version == 2 ? 'environment' : 'application'}.rb"
+require "mockery#{rails_version}/config/environment.rb"
 
 
-def get_storehouse_middleware
-  Rails.configuration.middleware.select{|m| m.klass.name =~ /Storehouse/}.first
-end
-
-def use_middleware_adapter!(name, options = {})
-  Storehouse.reset_data_store!
-  Storehouse.configure do |c|
-    c.adapter = name
-    c.adapter_options = options
+module GlobalMethods
+  def get_storehouse_middleware
+    Rails.configuration.middleware.select{|m| m.klass.name =~ /Storehouse/}.first
   end
-  Storehouse.data_store
+
+  def use_middleware_adapter!(name, options = {})
+    Storehouse.reset_data_store!
+    Storehouse.configure do |c|
+      c.adapter = name
+      c.adapter_options = options
+    end
+    Storehouse.data_store
+  end
+
+  def reset
+    Storehouse.config.try(:reset!)
+    dir = Rails.root.join('public', 'cache')
+    system("rm -r #{dir}") if File.exists?(dir)
+  end
+
 end
 
-def reset
-  Storehouse.config.reset!
-  dir = Rails.root.join('public', 'cache')
-  system("rm -r #{dir}") if File.exists?(dir)
-end
 
-
-if rails_version == 2
+if rails_version == '2'
   require 'spec/rails'
   Spec::Runner.configure do |config|
+    config.include GlobalMethods
     config.before do
       reset()
     end
@@ -46,7 +48,7 @@ else
     config.treat_symbols_as_metadata_keys_with_true_values = true
     config.run_all_when_everything_filtered = true
     config.filter_run :focus
-
+    config.include GlobalMethods
     config.before do
       reset()
     end

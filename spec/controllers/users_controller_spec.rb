@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe UsersController do
-  integrate_views
+  ENV['RAILS_VERSION'] == '2' ? integrate_views : render_views
 
   module Storehouse
     module Adapter
