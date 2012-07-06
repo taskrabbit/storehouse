@@ -9,7 +9,7 @@ require File.join(File.dirname(__FILE__), 'boot')
 Rails::Initializer.run do |config|
 
   config.middleware.use 'Storehouse::Middleware'
-
+  config.action_controller.page_cache_directory = "#{Rails.root}/public/cache/"
   config.time_zone = 'UTC'
 end
 

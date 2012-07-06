@@ -110,6 +110,15 @@ describe Storehouse::Config do
 
   end
 
+  it 'should allow distribution across multiple servers' do
+    Storehouse.configure do |c|
+      c.distribute! '/tos'
+    end
+
+    conf.distribute?('/tos').should be_true
+    conf.distribute?('/page').should be_false
+  end
+
 
 
 end

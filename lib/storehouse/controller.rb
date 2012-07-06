@@ -9,8 +9,8 @@ module Storehouse
     def cache_page(content, path)
       use_cache = Storehouse.config.consider_caching?(path)
       Storehouse.write(path, content) if use_cache
-         
-      super if defined?(super) && (!use_cache || Storehouse.config.continue_writing_filesystem)
+      return unless defined?(super)
+      super if !use_cache || Storehouse.config.continue_writing_filesystem || Storehouse.config.distribute?(path)
     end
 
   end
