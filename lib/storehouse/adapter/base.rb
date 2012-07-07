@@ -32,6 +32,10 @@ module Storehouse
         write(key, nil) # implement this method to remove a key from the cache
       end
 
+      def clear!(pattern = nil)
+        # implement this method to clear the entire cache
+      end
+
     end
   end
 end

@@ -12,7 +12,7 @@ end
 module Mockery3
   class Application < Rails::Application
     config.middleware.use 'Storehouse::Middleware'
-    config.action_controller.page_cache_directory = "#{Rails.root}/public/cache/"
+    config.action_controller.page_cache_directory = "#{Rails.root}/public/cache"
     config.time_zone = 'UTC'
 
     # Configure the default encoding used in templates for Ruby 1.9.

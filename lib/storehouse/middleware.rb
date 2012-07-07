@@ -10,6 +10,7 @@ module Storehouse
 
       path = env['REQUEST_URI']
       store = ::Storehouse.data_store
+
       cache_text = store && ::Storehouse.config.consider_caching?(path) ? store.read(path) : nil
 
       if cache_text

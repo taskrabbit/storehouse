@@ -28,6 +28,10 @@ module Storehouse
         @client.delete(key)
       end
 
+      def clear!
+        @client.flush_all
+      end
+
       protected
 
       def server

@@ -9,6 +9,7 @@ module Storehouse
     autoload :Base, 'storehouse/adapter/base'
     autoload :Memcache, 'storehouse/adapter/memcache'
     autoload :Dalli, 'storehouse/adapter/dalli'
+    autoload :Riak, 'storehouse/adapter/riak'
   end
 
   class << self
@@ -16,7 +17,7 @@ module Storehouse
     cattr_accessor :config
     cattr_accessor :store
 
-    delegate :read, :write, :delete, :to => :data_store, :allow_nil => true
+    delegate :read, :write, :delete, :clear, :to => :data_store, :allow_nil => true
 
     def configure
       self.config ||= ::Storehouse::Config.new

@@ -13,7 +13,7 @@ module Storehouse
       def disconnect!
         @client.close
       end
-
+      
     end
   end
 end

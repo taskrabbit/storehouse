@@ -15,4 +15,5 @@ end
 
 group :development do
   gem 'thin'
+  gem 'riak-client'
 end
