@@ -1,15 +1,17 @@
 module Storehouse
 
-  autoload :VERSION, 'storehouse/version'
-  autoload :Config, 'storehouse/config'
-  autoload :Middleware, 'storehouse/middleware'
-  autoload :Controller, 'storehouse/controller'
+  autoload :VERSION,      'storehouse/version'
+  autoload :Config,       'storehouse/config'
+  autoload :Middleware,   'storehouse/middleware'
+  autoload :Controller,   'storehouse/controller'
 
   module Adapter
-    autoload :Base, 'storehouse/adapter/base'
-    autoload :Memcache, 'storehouse/adapter/memcache'
-    autoload :Dalli, 'storehouse/adapter/dalli'
-    autoload :Riak, 'storehouse/adapter/riak'
+    autoload :Base,       'storehouse/adapter/base'
+    autoload :Memcache,   'storehouse/adapter/memcache'
+    autoload :Dalli,      'storehouse/adapter/dalli'
+    autoload :Riak,       'storehouse/adapter/riak'
+    autoload :Redis,      'storehouse/adapter/redis'
+    autoload :S3,         'storehouse/adapter/s3'
   end
 
   class << self

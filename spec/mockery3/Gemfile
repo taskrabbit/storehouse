@@ -4,6 +4,7 @@ gem 'rails', '3.2.6'
 gem 'sqlite3'
 gem 'json'
 gem 'dalli', '~> 1.0.4'
+gem 'aws-sdk'
 gem 'storehouse', :path => './../../'
 gem 'jquery-rails'
 
@@ -16,4 +17,5 @@ end
 group :development do
   gem 'thin'
   gem 'riak-client'
+
 end

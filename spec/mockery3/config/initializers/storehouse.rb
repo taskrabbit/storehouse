@@ -1,4 +1,4 @@
 Storehouse.configure do |config|
-  config.adapter = 'Riak'
+  config.adapter = 'Base'
   config.hook_controllers!
 end

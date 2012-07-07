@@ -5,8 +5,8 @@ module Storehouse
     class Memcache < Base
 
       def initialize(options = {})
-        options.reverse_merge!(:host => 'localhost', :port => '11211')
-        super(options)
+        super
+        @client_options = options[:client] || {:host => 'localhost', :port => '11211'}
         connect!
       end
 
@@ -35,7 +35,7 @@ module Storehouse
       protected
 
       def server
-        "#{self.options[:host]}:#{self.options[:port]}"
+        "#{@client_options[:host]}:#{@client_options[:port]}"
       end
 
     end

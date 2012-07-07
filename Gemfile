@@ -11,7 +11,8 @@ group :development, :test do
   gem 'sqlite3'
   gem 'dalli', '~> 1.0.4'
   gem 'memcache'
-  gem 'riak-client'  
+  gem 'riak-client'
+  gem 'aws-sdk'  
   gem 'rspec-core' unless  rails_version == '2'
   gem 'rspec-rails', (rails_version == '2' ? '1.3.4' : '2.10.1')
 end
