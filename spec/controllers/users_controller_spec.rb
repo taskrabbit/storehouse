@@ -3,36 +3,6 @@ require 'spec_helper'
 describe UsersController do
   ENV['RAILS_VERSION'] == '2' ? integrate_views : render_views
 
-  module Storehouse
-    module Adapter
-      class InMemoryHash < Base
-
-        attr_reader :content
-        def initialize(options = {})
-          super
-          @content = {}
-        end
-
-        def write(key, val)
-          self.content[key] = val
-        end
-
-        def delete(key)
-          self.content.delete(key)
-        end
-
-        def read(key)
-          self.content[key]
-        end
-
-        def clear!
-          @content = {}
-        end
-
-      end
-    end
-  end
-
   before do
     @user = User.last || User.create(:first_name => 'Gerry', :last_name => 'Philmore')
     Storehouse.configure do |config|
@@ -87,8 +57,6 @@ describe UsersController do
       
       get :touch, :id => @user
     end
-
-
 
   end
 

@@ -9,19 +9,18 @@ module Storehouse
     def call(env)
 
       path = env['REQUEST_URI']
-      store = ::Storehouse.data_store
 
-      cache_text = store && ::Storehouse.config.consider_caching?(path) ? store.read(path) : nil
+      cache_text = ::Storehouse.config.consider_caching?(path) ? ::Storehouse.read(path) : nil
 
       if cache_text
-        write_to_filesystem(cache_text, path) if can_write_to_filesystem? && Storehouse.config.distribute?(path)
+        write_to_filesystem(cache_text, path) if can_write_to_filesystem? && ::Storehouse.config.distribute?(path)
         return [200, headers_for(env, cache_text), cache_text]
       end
 
       @app.call(env)
 
     ensure
-      store.try(:teardown!)
+      ::Storehouse.teardown!
     end
 
     
@@ -37,7 +36,7 @@ module Storehouse
     end
 
     def format_from_path(path)
-      case path.to_s.split('?').first.split('.').last
+      case path.to_s.split('?').first.split('.')[1].to_s
       when 'html', 'mobile', ''
         'text/html'
       when 'js', 'json'

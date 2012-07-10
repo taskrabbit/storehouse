@@ -19,7 +19,7 @@ module Storehouse
     cattr_accessor :config
     cattr_accessor :store
 
-    delegate :read, :write, :delete, :clear, :to => :data_store, :allow_nil => true
+    delegate :read, :write, :delete, :clear, :teardown!, :to => :data_store, :allow_nil => true
 
     def configure
       self.config ||= ::Storehouse::Config.new
