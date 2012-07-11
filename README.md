@@ -1,8 +1,10 @@
 # Storehouse
 
-TODO: Write a gem description
+Storehouse provides a cache layer that wraps Rails' page caching strategy. It provides a middleware that returns content from a centralized cache store and writes files to your local machine on-demand, allowing distribution to multiple servers. Cache stores can be easily defined by using or creating an adapter.
 
 ## Installation
+
+** Storehouse is compatible and tested in both Rails 2 (2.3.14) and 3 (3.2.6) **
 
 Add this line to your application's Gemfile:
 
@@ -18,7 +20,68 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Create an initializer to configure your storehouse integration:
+
+    # config/intializers/storehouse.rb
+    Storehouse.configure do |c|
+      c.adapter = 'Riak'                                          # the adapter to use
+      c.adapter_options = {:bucket => '_page_cached_content'}     # pass options that are provided to the adapter instance
+      c.continue_writing_filesystem = true                        # should storehouse allow rails to continue writing to the filesystem?
+      
+      c.distribute = ['/tos', '/privacy', /^\/pages\//]           # patterns or paths to match against when determining if content should be distributed
+      c.distribute!(/\/users/[\d]+/)                              # append the provided value(s) to the 'distribution' array
+
+      c.except = ['/dynamic_page']                                # opt out of caching this page using storehouse
+      c.except!('/tos')                                           # append the provided value(s) to the 'except' array
+      c.ignore!('/about')                                         # alias for c.except!
+
+      c.only = ['/tos', '/privacy']                               # only cache these pages or patterns in storehouse
+      c.only!('/about')                                           # append the provided value(s) to the 'only' array
+
+      c.hook_controllers!                                         # hook ActionController::Base's expire_page and cache_page with storehouse
+    end
+
+Include the middleware into your app:
+
+    # application.rb or environment.rb
+
+    config.middleware.use 'Storehouse::Middleware'
+
+Now you're ready to go.
+
+## Adapters
+
+The following cache store adapters are provided:
+
+  -   Memcache
+  -   Dalli
+  -   Redis
+  -   Riak
+  -   S3
+
+To create your own adapter inherit from `Storehouse::Adapter::Base` and implement the following methods:
+    
+  - connect!
+  - read(path)
+  - write(path, content)
+  - delete(path)
+  - clear!
+
+## Distributed Cache
+
+When you're quickly developing an application you don't always want to deal with centralizing your cached content, which makes Storehouse a viable solution. That said, it does require the Rack stack to be invoked to access the centralized cache store which is obviously not as fast as, say, nginx. For this reason Storehouse allows on-demand distribution. You must opt into this solution since expiration would have to be done on each server. Generally, this is a solution that works well for truly static content that's expired on deploy. Let's look at an example:
+
+If I have 2 servers, **A** and **B**. A request comes into **A** which looks like:
+
+    GET [A]/terms-of-service
+
+Normally, Rails would drop a file in your cache directory on server **A**. If server **B** receives the same request, Rails must do the same on that server, completely ignorant of server **A**'s content.
+
+With Storehouse enabled and `/terms-of-service` in the config's distribution array, requesting:
+
+    GET [B]/terms-of-service
+
+would request `/terms-of-service` from the Storehouse cache store, retrieve the cached content, and lay down a new file on server **B**. Now, when `/terms-of-service` is requested on either server the content on the filesystem will be served, completely bypassing the application stack.
 
 ## Contributing
 
