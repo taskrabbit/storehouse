@@ -4,7 +4,7 @@ Storehouse provides a cache layer that wraps Rails' page caching strategy. It pr
 
 ## Installation
 
-** Storehouse is compatible and tested in both Rails 2 (2.3.14) and 3 (3.2.6) **
+**Storehouse is compatible and tested in both Rails 2 (2.3.14) and 3 (3.2.6)**
 
 Add this line to your application's Gemfile:
 
@@ -82,6 +82,10 @@ With Storehouse enabled and `/terms-of-service` in the config's distribution arr
     GET [B]/terms-of-service
 
 would request `/terms-of-service` from the Storehouse cache store, retrieve the cached content, and lay down a new file on server **B**. Now, when `/terms-of-service` is requested on either server the content on the filesystem will be served, completely bypassing the application stack.
+
+## Clearing the Cache
+
+Many times when you deploy new code you want to clear your cache. To do so in Storehouse you'll want to clear the files dropped on the server (if any) then call `Storehouse.clear!`. Each adapter makes sure that all the existing keys in the cache namespace are cleared.
 
 ## Contributing
 
