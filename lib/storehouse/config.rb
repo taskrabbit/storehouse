@@ -17,8 +17,8 @@ module Storehouse
     attr_accessor :adapter
     attr_accessor :adapter_options
     attr_accessor :continue_writing_filesystem
-    attr_accessor :disable
-
+    attr_accessor :disabled
+    
     config_list :distribute, :except, :only
     alias_method :ignore!, :except!
 
