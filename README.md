@@ -49,6 +49,18 @@ Include the middleware into your app:
 
 Now you're ready to go.
 
+## Advanced Configuration
+
+For more flexibility you can also provide Storehouse's configuration with an array containing a path and a function or a hash containing paths as the keys and functions as the values. The function will be given the path at runtime and should return true or false.
+
+    # config/initializers/storehouse.rb
+    Storehouse.configure do |c|
+      c.only! '/tos', {/\/pages\// => lambda{|path| path.length == 12 }}
+      c.except! '/privacy', [/\/pages\//, lambda{|path| path.ends_with?('t') }]
+    end
+
+Pointless examples, but the ability to configure is there. The `function` just needs to respond to `call()` so you can use whatever you want there.
+
 ## Adapters
 
 The following cache store adapters are provided:

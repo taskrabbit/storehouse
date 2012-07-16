@@ -12,7 +12,7 @@ module Storehouse
 
       def connect!
         @client ||= begin
-          Memcache.new(:server => self.server)
+          ::Memcache.new(:server => self.server)
         end
       end
 

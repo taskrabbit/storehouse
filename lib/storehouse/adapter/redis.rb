@@ -13,7 +13,7 @@ module Storehouse
 
       def connect!
         @client ||= begin
-          ::Redis::Client.new(@client_options)
+          ::Redis.new(@client_options)
         end
       end 
 
@@ -30,14 +30,14 @@ module Storehouse
       end
 
       def clear!
-        keys = @client.keys("#{@namespace}*")
+        keys = @client.keys("#{@namespace}::*")
         @client.del(*keys)
       end
 
       protected
 
       def end_path(path)
-        @namespace + path
+        @namespace + '::' + path
       end
 
     end

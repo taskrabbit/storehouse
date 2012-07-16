@@ -7,7 +7,7 @@ module Storehouse
           attr_accessor :#{name}
           def #{name}!(*paths)
             self.#{name} ||= []
-            self.#{name} |= paths
+            self.#{name} |= paths.map(&:to_a).flatten(1)
           end
         EV
       end
@@ -17,6 +17,7 @@ module Storehouse
     attr_accessor :adapter
     attr_accessor :adapter_options
     attr_accessor :continue_writing_filesystem
+    attr_accessor :disable
 
     config_list :distribute, :except, :only
     alias_method :ignore!, :except!
@@ -24,6 +25,24 @@ module Storehouse
 
     def hook_controllers!
       ActionController::Base.extend Storehouse::Controller
+    end
+
+    def disable!
+      self.disabled = true
+    end
+
+    def adapter=(adap, options = nil)
+      if options
+        self.adapter_options = options
+      else
+        Storehouse.reset_data_store!
+      end
+      @adapter = adap
+    end
+
+    def adapter_options=(opts)
+      Storehouse.reset_data_store!
+      @adapter_options = opts
     end
 
     def reset!
@@ -40,6 +59,7 @@ module Storehouse
     end
 
     def consider_caching?(path)
+      return false  if self.disabled
       return true   if self.except.blank? && self.only.blank?
       return false  if list_match?(self.except, path)
       return true   if self.only.blank?
@@ -61,6 +81,8 @@ module Storehouse
         path == against
       when Regexp
         path =~ against
+      when Array
+        match?(against.first, path) ? (against.last.respond_to?(:call) ? against.last.call(path) : !!against) : false
       else
         false
       end

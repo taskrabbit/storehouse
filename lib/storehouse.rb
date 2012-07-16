@@ -33,7 +33,7 @@ module Storehouse
 
     def data_store
       self.store ||= begin
-        class_name = (self.config.try(:adapter) || 'Base').to_s.classify
+        class_name = (self.config.try(:adapter) || 'Base').to_s
         "Storehouse::Adapter::#{class_name}".constantize.new(self.config.try(:adapter_options) || {})
       end
     end
