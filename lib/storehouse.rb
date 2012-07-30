@@ -19,7 +19,15 @@ module Storehouse
     cattr_accessor :config
     cattr_accessor :store
 
-    delegate :read, :write, :delete, :clear!, :teardown!, :to => :data_store, :allow_nil => true
+    delegate :teardown!, :to => :data_store, :allow_nil => true
+
+    %w(read write delete clear!).each do |meth|
+      class_eval <<-EV
+        def #{meth}(*args)
+          self.data_store.try(:_#{meth}, *args)
+        end
+      EV
+    end
 
     def configure
       self.config ||= ::Storehouse::Config.new
@@ -30,6 +38,8 @@ module Storehouse
     def reset_data_store!
       self.store = nil
     end
+
+    protected
 
     def data_store
       self.store ||= begin

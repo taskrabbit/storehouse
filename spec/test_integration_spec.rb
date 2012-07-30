@@ -7,12 +7,12 @@ describe 'Rails integration for testing' do
   end
 
   it 'should use the default adapter' do
-    Storehouse.data_store.class.name.should eql('Storehouse::Adapter::Base')
+    Storehouse.send(:data_store).class.name.should eql('Storehouse::Adapter::Base')
   end
 
   it 'should be able to change the adapter' do
     use_middleware_adapter!('Dalli')
-    Storehouse.data_store.class.name.should eql('Storehouse::Adapter::Dalli')
+    Storehouse.send(:data_store).class.name.should eql('Storehouse::Adapter::Dalli')
   end
 
 end

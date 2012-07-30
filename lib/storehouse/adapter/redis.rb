@@ -7,7 +7,7 @@ module Storehouse
       def initialize(options = {})
         super
         @client_options = options[:client] || {}
-        @namespace = options[:namespace] || '_page_cache'
+        @namespace = options[:namespace] || ['_page_cache', Storehouse.config.scope].compact.join('_')
         connect!
       end
 
@@ -17,16 +17,18 @@ module Storehouse
         end
       end 
 
+      protected
+
       def read(path)
-        @client.get(end_path(path))
+        @client.get(path)
       end
 
-      def write(path, content)
-        @client.set(end_path(path), content)
+      def write(path, content, options = {})
+        @client.set(path, content)
       end
 
       def delete(path)
-        @client.del(end_path(path))
+        @client.del(path)
       end
 
       def clear!
@@ -36,8 +38,8 @@ module Storehouse
 
       protected
 
-      def end_path(path)
-        @namespace + '::' + path
+      def scoped_key(path)
+        [@namespace, path].compact.join('::')
       end
 
     end

@@ -7,7 +7,7 @@ module Storehouse
           attr_accessor :#{name}
           def #{name}!(*paths)
             self.#{name} ||= []
-            self.#{name} |= paths.map(&:to_a).flatten(1)
+            self.#{name} |= paths.map{|p| Array(p) }.flatten(1)
           end
         EV
       end
@@ -18,6 +18,7 @@ module Storehouse
     attr_accessor :adapter_options
     attr_accessor :continue_writing_filesystem
     attr_accessor :disabled
+    attr_accessor :scope
     
     config_list :distribute, :except, :only
     alias_method :ignore!, :except!

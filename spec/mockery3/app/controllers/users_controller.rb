@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
 
-  caches_page :index, :show, :account
+  caches_page :show, :account
+  caches_page :index, :expires_in => 10.minutes
   cache_sweeper :user_sweeper, :only => [ :touch ]
   
   def index

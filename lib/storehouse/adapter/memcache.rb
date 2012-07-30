@@ -16,16 +16,18 @@ module Storehouse
         end
       end
 
-      def read(key)
-        @client.get(key)
+      protected
+
+      def read(path)
+        @client.get(path)
       end
 
-      def write(key, content)
-        @client.set(key, content)
+      def write(path, content, options = {})
+        @client.set(path, content)
       end
 
-      def delete(key)
-        @client.delete(key)
+      def delete(path)
+        @client.delete(path)
       end
 
       def clear!

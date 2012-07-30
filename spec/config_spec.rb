@@ -40,7 +40,7 @@ describe Storehouse::Config do
     end
 
     Storehouse::Adapter::FakeAdapter.should_receive(:new).with({:key => 'value'})
-    Storehouse.data_store
+    Storehouse.send(:data_store)
   end
 
   it 'should allow path restrictions to be configured via "only"' do

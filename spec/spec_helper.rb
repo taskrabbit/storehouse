@@ -21,7 +21,7 @@ module GlobalMethods
       c.adapter = name
       c.adapter_options = options
     end
-    Storehouse.data_store
+    Storehouse.send(:data_store)
   end
 
   def reset
@@ -42,7 +42,7 @@ module Storehouse
         @content = {}
       end
 
-      def write(key, val)
+      def write(key, val, options = {})
         self.content[key] = val
       end
 
