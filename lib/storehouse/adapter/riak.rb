@@ -20,7 +20,6 @@ module Storehouse
       def read(path)
         @bucket.get(path).data
       rescue ::Riak::FailedRequest => e
-        raise e unless e.not_found?
         nil
       end
 
