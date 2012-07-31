@@ -8,16 +8,8 @@ module Storehouse
         @options = options
       end
 
-      def connect!
-        # implement if you need to configure a connection
-      end
-
       def teardown!
         # implement if something needs to occur after each request
-      end
-
-      def disconnect!
-        # implement if you need to release the connection
       end
 
       def _read(key)

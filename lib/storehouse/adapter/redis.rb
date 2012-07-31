@@ -8,35 +8,32 @@ module Storehouse
         super
         @client_options = options[:client] || {}
         @namespace = options[:namespace] || ['_page_cache', Storehouse.config.scope].compact.join('_')
-        connect!
       end
-
-      def connect!
-        @client ||= begin
-          ::Redis.new(@client_options)
-        end
-      end 
 
       protected
 
       def read(path)
-        @client.get(path)
+        client.get(path)
       end
 
       def write(path, content, options = {})
-        @client.set(path, content)
+        client.set(path, content)
       end
 
       def delete(path)
-        @client.del(path)
+        client.del(path)
       end
 
       def clear!
         keys = @client.keys("#{@namespace}::*")
-        @client.del(*keys)
+        client.del(*keys)
       end
 
-      protected
+      def client
+        @client ||= begin
+          ::Redis.new(@client_options)
+        end
+      end 
 
       def scoped_key(path)
         [@namespace, path].compact.join('::')

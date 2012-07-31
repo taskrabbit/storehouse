@@ -7,13 +7,6 @@ module Storehouse
       def initialize(options = {})
         super
         @client_options = options[:client] || {:host => 'localhost', :port => '11211'}
-        connect!
-      end
-
-      def connect!
-        @client ||= begin
-          ::Memcache.new(:server => self.server)
-        end
       end
 
       protected
@@ -32,6 +25,12 @@ module Storehouse
 
       def clear!
         @client.flush_all
+      end
+
+      def client
+        @client ||= begin
+          ::Memcache.new(:server => self.server)
+        end
       end
 
       protected

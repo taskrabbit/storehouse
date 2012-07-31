@@ -73,7 +73,6 @@ The following cache store adapters are provided:
 
 To create your own adapter inherit from `Storehouse::Adapter::Base` and implement the following methods:
     
-  - connect!
   - read(path)
   - write(path, content)
   - delete(path)
