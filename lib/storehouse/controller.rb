@@ -29,7 +29,7 @@ module Storehouse
     end
 
     def expire_page(path)
-      benchmark "Expired storehouse page: #{path}" do
+      storehouse_benchmark :expire_page, path do
         Storehouse.delete(path)
       end
       super
@@ -52,11 +52,29 @@ module Storehouse
           end
         end
       elsif use_cache
-        benchmark "Cached storehouse page: #{path}" do
+        storehouse_benchmark :write_page, path do
           Storehouse.write(path, content, options)
         end
       end
     
+    end
+
+    protected
+
+    def storehouse_benchmark(key, path)
+      if respond_to?(:benchmark)
+        statement = key == :expire_page ? 'Expired storehouse page' : 'Cached storehouse page'
+
+        benchmark "#{statement}: #{path}" do
+          yield
+        end
+      elsif respond_to?(:instrument_page_cache)
+        instrument_page_cache key, path do
+          yield
+        end
+      else
+        yield
+      end
     end
 
 
