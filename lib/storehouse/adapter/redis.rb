@@ -24,8 +24,8 @@ module Storehouse
         client.del(path)
       end
 
-      def clear!
-        keys = @client.keys("#{@namespace}::*")
+      def clear!(pattern = nil)
+        keys = @client.keys("#{@namespace}::#{pattern || '*'}")
         client.del(*keys)
       end
 

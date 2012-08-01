@@ -23,7 +23,7 @@ module Storehouse
         @client.delete(path)
       end
 
-      def clear!
+      def clear!(pattern = nil)
         @client.flush_all
       end
 

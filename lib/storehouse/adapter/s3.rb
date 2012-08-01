@@ -30,7 +30,7 @@ module Storehouse
       rescue AWS::S3::Errors::Forbidden
       end
 
-      def clear!
+      def clear!(pattern = nil)
         bucket.clear!
       end
 

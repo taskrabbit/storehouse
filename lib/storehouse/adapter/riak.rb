@@ -33,9 +33,9 @@ module Storehouse
         bucket.delete(path)
       end
 
-      def clear!
+      def clear!(pattern = nil)
         bucket.keys do |k|
-          delete(k)
+          delete(k) if pattern.nil? || k.to_s =~ pattern
         end
       end
 
