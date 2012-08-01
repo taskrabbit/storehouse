@@ -27,7 +27,8 @@ Create an initializer to configure your storehouse integration:
       c.adapter = 'Riak'                                          # the adapter to use
       c.adapter_options = {:bucket => '_page_cached_content'}     # pass options that are provided to the adapter instance
       c.continue_writing_filesystem = true                        # should storehouse allow rails to continue writing to the filesystem?
-      
+      c.ignore_query_params = false                               # should storehouse ignore query params when choosing a cached object?
+
       c.distribute = ['/tos', '/privacy', /^\/pages\//]           # patterns or paths to match against when determining if content should be distributed
       c.distribute!(/\/users/[\d]+/)                              # append the provided value(s) to the 'distribution' array
 

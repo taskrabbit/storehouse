@@ -16,6 +16,7 @@ module Storehouse
 
     attr_accessor :adapter
     attr_accessor :adapter_options
+    attr_accessor :ignore_query_params
     attr_accessor :continue_writing_filesystem
     attr_accessor :disabled
     attr_accessor :scope

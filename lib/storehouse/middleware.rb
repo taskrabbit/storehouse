@@ -8,13 +8,16 @@ module Storehouse
 
     def call(env)
 
-      path = env['REQUEST_URI']
+      if ::Storehouse.config.ignore_query_params || env['QUERY_STRING'].to_s.length == 0
+        
+        path = env['REQUEST_URI']
 
-      cache_text = ::Storehouse.config.consider_caching?(path) ? ::Storehouse.read(path) : nil
+        cache_text = ::Storehouse.config.consider_caching?(path) ? ::Storehouse.read(path) : nil
 
-      if cache_text
-        write_to_filesystem(cache_text, path) if can_write_to_filesystem? && ::Storehouse.config.distribute?(path)
-        return [200, headers_for(env, cache_text), cache_text]
+        if cache_text
+          write_to_filesystem(cache_text, path) if can_write_to_filesystem? && ::Storehouse.config.distribute?(path)
+          return [200, headers_for(env, cache_text), cache_text]
+        end
       end
 
       @app.call(env)
