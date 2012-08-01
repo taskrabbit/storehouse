@@ -24,6 +24,7 @@ module Storehouse
     %w(read write delete clear!).each do |meth|
       class_eval <<-EV
         def #{meth}(*args)
+          return nil if self.config.disabled
           self.data_store.try(:_#{meth}, *args)
         end
       EV
