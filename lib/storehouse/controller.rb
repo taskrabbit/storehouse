@@ -29,8 +29,10 @@ module Storehouse
     end
 
     def expire_page(path)
-      Storehouse.delete(path)
-      super if defined?(super)
+      benchmark "Expired storehouse page: #{path}" do
+        Storehouse.delete(path)
+      end
+      super
     end
 
     def cache_page(content, path, extension = nil, gzip = nil)
@@ -38,19 +40,20 @@ module Storehouse
       options = self.page_cache_action && self.page_cache_options.try(:[], self.page_cache_action) || {}
 
       use_cache = Storehouse.config.consider_caching?(path)
-      Storehouse.write(path, content, options) if use_cache
-      
-      return unless defined?(super)
 
       if !use_cache || Storehouse.config.continue_writing_filesystem || Storehouse.config.distribute?(path)
         begin
           super
-        rescue Exception => e
+        rescue Exception => e # rails 2 vs rails 3
           if e.message =~ /wrong number of arguments/
             super(content, path)
           else
             raise e
           end
+        end
+      elsif use_cache
+        benchmark "Cached storehouse page: #{path}" do
+          Storehouse.write(path, content, options)
         end
       end
     

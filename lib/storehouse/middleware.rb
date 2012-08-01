@@ -7,17 +7,17 @@ module Storehouse
 
 
     def call(env)
+      @request = env
 
-      if ::Storehouse.config.ignore_query_params || env['QUERY_STRING'].to_s.length == 0
-        
-        path = env['REQUEST_URI']
+      if should_care_about_request?
+          
+        @content = ::Storehouse.config.consider_caching?(request_path) ? ::Storehouse.read(request_path) : nil
 
-        cache_text = ::Storehouse.config.consider_caching?(path) ? ::Storehouse.read(path) : nil
-
-        if cache_text
-          write_to_filesystem(cache_text, path) if can_write_to_filesystem? && ::Storehouse.config.distribute?(path)
-          return [200, headers_for(env, cache_text), cache_text]
+        if @content
+          write_to_filesystem! if can_write_to_filesystem? && ::Storehouse.config.distribute?(request_path)
+          return [200, build_headers, @content]
         end
+
       end
 
       @app.call(env)
@@ -30,16 +30,36 @@ module Storehouse
 
     protected
 
-    def headers_for(env, content)
+    def should_care_about_request?
+      get_request? && void_of_query_string?
+    end
+
+    # maybe we can use a rack::request eventually.
+    # right now these are simple operations.
+    def get_request?
+      @request['REQUEST_METHOD'].to_s.downcase == 'get'
+    end
+
+    def void_of_query_string?
+      ::Storehouse.config.ignore_query_params || @request['QUERY_STRING'].to_s.length == 0
+    end
+
+    def request_path
+      @request_path ||= @request['REQUEST_URI']
+    end
+
+
+    def build_headers
       {
-        'Content-Type' => format_from_path(env['REQUEST_URI']),
-        'Content-Length' => content.length.to_s,
+        'Content-Type' => format_from_path,
+        'Content-Length' => @content.length.to_s,
         'Cache-Control' => 'private, max-age=0, must-revalidate'
       }.delete_if{|k,v| v.nil? }
     end
 
-    def format_from_path(path)
-      case path.to_s.split('?').first.split('.')[1].to_s
+    # improve this.
+    def format_from_path
+      case request_path.to_s.split('?').first.split('.')[1].to_s
       when 'html', 'mobile', ''
         'text/html'
       when 'js', 'json'
@@ -51,8 +71,8 @@ module Storehouse
       end
     end 
 
-    def write_to_filesystem(content, path)
-      ActionController::Base.cache_page(content, path)
+    def write_to_filesystem!
+      ActionController::Base.cache_page(@content, request_path)
     end
 
     def can_write_to_filesystem?
