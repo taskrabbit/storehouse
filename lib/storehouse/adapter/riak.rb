@@ -18,7 +18,7 @@ module Storehouse
 
       def read(path)
         bucket.get(path).data
-      rescue ::Riak::FailedRequest => e
+      rescue # any error coming from the client will be consumed
         nil
       end
 
@@ -35,7 +35,7 @@ module Storehouse
 
       def clear!(pattern = nil)
         bucket.keys do |k|
-          delete(k) if pattern.nil? || k.to_s =~ pattern
+          delete(k) if k.present? && (pattern.nil? || k.to_s =~ pattern)
         end
       end
 

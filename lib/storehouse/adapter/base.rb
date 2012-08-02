@@ -25,7 +25,7 @@ module Storehouse
       end
 
       def _clear!(pattern = nil)
-        pattern ||= Storehouse.config.scope
+        pattern ||= Storehouse.config.scope ? /^#{Storehouse.config.scope}/ : nil
         clear!(pattern)
       end
       protected

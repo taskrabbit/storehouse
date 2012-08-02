@@ -45,7 +45,7 @@ module Storehouse
     end
 
     def request_path
-      @request_path ||= @request['REQUEST_URI']
+      @request['REQUEST_URI']
     end
 
 
