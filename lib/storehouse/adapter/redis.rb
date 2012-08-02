@@ -17,7 +17,12 @@ module Storehouse
       end
 
       def write(path, content, options = {})
-        client.set(path, content)
+        time_to_live = ttl(options)
+        if time_to_live
+          client.setex(path, time_to_live, content)
+        else
+          client.set(path, content)
+        end
       end
 
       def delete(path)

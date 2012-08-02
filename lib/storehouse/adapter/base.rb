@@ -25,7 +25,7 @@ module Storehouse
       end
 
       def _clear!(pattern = nil)
-        pattern ||= Storehouse.config.scope ? /^#{Storehouse.config.scope}/ : nil
+        pattern ||= Storehouse.config.scope ? "#{Storehouse.config.scope}*" : nil
         clear!(pattern)
       end
       protected
@@ -48,6 +48,17 @@ module Storehouse
 
       def scoped_key(path)
         [Storehouse.config.scope, path].compact.join('::')
+      end
+
+      def ttl(options)
+        options[:expires_in]
+      end
+
+      def expires_at(options)
+        expiration = ttl(options)
+        expiration = Time.now + expiration if expiration
+        expiration ||= options[:expires_at]
+        expiration
       end
 
     end

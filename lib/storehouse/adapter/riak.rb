@@ -17,16 +17,34 @@ module Storehouse
       end
 
       def read(path)
-        bucket.get(path).data
+        object = bucket.get(path)
+        
+        expiration = object.indexes['expires_at_int']
+        expiration = expiration.first if expiration.respond_to?(:first)
+
+        if expiration && expiration < Time.now.to_i
+          delete(path)
+          nil
+        else
+          object.data
+        end
       rescue # any error coming from the client will be consumed
         nil
       end
 
       def write(path, content, options = {})
+        
         object = bucket.get_or_new(path)
         object.content_type = 'text/plain'
         object.data = content
+
+        
+        if expiration = expires_at(options)
+          object.indexes['expires_at_int'] = expiration.to_i
+        end
+
         object.store
+      
       end
 
       def delete(path)
@@ -34,9 +52,7 @@ module Storehouse
       end
 
       def clear!(pattern = nil)
-        bucket.keys do |k|
-          delete(k) if k.present? && (pattern.nil? || k.to_s =~ pattern)
-        end
+        bucket.delete(pattern)
       end
 
     end

@@ -16,7 +16,7 @@ module Storehouse
       end
 
       def write(path, content, options = {})
-        @client.set(path, content)
+        @client.set(path, content, ttl(options))
       end
 
       def delete(path)
