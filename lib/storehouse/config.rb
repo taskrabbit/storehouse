@@ -57,6 +57,7 @@ module Storehouse
     end
 
     def distribute?(path)
+      return false if self.disabled
       list_match?(self.distribute, path)
     end
 
@@ -86,7 +87,11 @@ module Storehouse
       when Array
         match?(against.first, path) ? (against.last.respond_to?(:call) ? against.last.call(path) : !!against) : false
       else
-        false
+        if against.respond_to?(:call)
+          !!against.call(path)
+        else
+          false
+        end
       end
     end
 

@@ -3,13 +3,13 @@ module Storehouse
 
     def self.extended(base)
       base.instance_eval do
-        cattr_accessor :page_cache_options
-        cattr_accessor :page_cache_action
+        cattr_accessor :storehouse_page_cache_options
+        cattr_accessor :storehouse_page_cache_action
       end
     end
 
-    def set_caching_options(options = {})
-      self.page_cache_options = options.slice(:expires_in, :expires_at)
+    def set_storehouse_caching_options(options = {})
+      self.storehouse_page_cache_options = options.slice(:expires_in, :expires_at, :storehouse)
     end
 
     def caches_page(*actions)
@@ -17,29 +17,29 @@ module Storehouse
       options = actions.extract_options!
       
       unless options.blank?
-        self.page_cache_options ||= {}
+        self.storehouse_page_cache_options ||= {}
         actions.each do |action|
-          self.page_cache_options[action] = options
+          self.storehouse_page_cache_options[action] = options
         end
       end
 
 
-      before_filter(:only => actions){|c| c.class.page_cache_action = c.action_name.to_sym }
+      before_filter(:only => actions){|c| c.class.storehouse_page_cache_action = c.action_name.to_sym }
       super(*(actions | [options]))
     end
 
     def expire_page(path)
       storehouse_benchmark :expire_page, path do
         Storehouse.delete(path)
-      end
+      end unless Storehouse.config.disabled
       super
     end
 
     def cache_page(content, path, extension = nil, gzip = nil)
       
-      options = self.page_cache_action && self.page_cache_options.try(:[], self.page_cache_action) || {}
+      options = self.storehouse_page_cache_action && self.storehouse_page_cache_options.try(:[], self.storehouse_page_cache_action) || {}
 
-      use_cache = Storehouse.config.consider_caching?(path)
+      use_cache = (options[:storehouse].nil? || options[:storehouse]) && Storehouse.config.consider_caching?(path)
 
       if !use_cache || Storehouse.config.continue_writing_filesystem || Storehouse.config.distribute?(path)
         begin

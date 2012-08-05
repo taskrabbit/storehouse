@@ -120,6 +120,26 @@ describe Storehouse::Config do
 
   end
 
+  it 'should allow different types of list elements' do
+
+    Storehouse.configure do |c|
+      c.except = [
+        '/tos', 
+        /\/privacy/, 
+        [/^\/users\//, lambda{|path| path == '/users/2' }],
+        lambda{|path| path == '/something/dynamic' }
+      ]
+
+      conf.consider_caching?('/page').should be_true
+      conf.consider_caching?('/tos').should be_false
+      conf.consider_caching?('/privacy_statement').should be_false
+      conf.consider_caching?('/users/2').should be_false
+      conf.consider_caching?('/users/1').should be_true
+      conf.consider_caching?('/something/dynamic').should be_false
+    end
+
+  end
+
 
 
 end
