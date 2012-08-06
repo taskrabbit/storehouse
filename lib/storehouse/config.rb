@@ -33,6 +33,10 @@ module Storehouse
       self.disabled = true
     end
 
+    def enable!
+      self.disabled = false
+    end
+
     def adapter=(adap, options = nil)
       if options
         self.adapter_options = options
