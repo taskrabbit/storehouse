@@ -6,7 +6,7 @@ describe UsersController do
   before do
     @user = User.last || User.create(:first_name => 'Gerry', :last_name => 'Philmore')
     Storehouse.configure do |config|
-      config.adapter = 'InMemoryHash'
+      config.adapter = 'InMemory'
       config.except = /\/account/
       config.hook_controllers!
     end
@@ -63,7 +63,7 @@ describe UsersController do
       get :show, :id => @user
       response.should be_success
 
-      Storehouse.send(:data_store).read("/users/#{@user.id}").should_not be_blank
+      Storehouse.read("/users/#{@user.id}").should_not be_blank
     end
 
     it 'should expire the cache when the user is updated' do

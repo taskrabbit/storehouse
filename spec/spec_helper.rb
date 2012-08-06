@@ -32,37 +32,6 @@ module GlobalMethods
 
 end
 
-module Storehouse
-  module Adapter
-    class InMemoryHash < Base
-
-      attr_reader :content
-      def initialize(options = {})
-        super
-        @content = {}
-      end
-
-      def write(key, val, options = {})
-        self.content[key] = val
-      end
-
-      def delete(key)
-        self.content.delete(key)
-      end
-
-      def read(key)
-        self.content[key]
-      end
-
-      def clear!
-        @content = {}
-      end
-
-    end
-  end
-end
-
-
 if $rails_version == '2'
   require 'spec/rails'
   Spec::Runner.configure do |config|

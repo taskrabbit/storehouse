@@ -12,6 +12,7 @@ module Storehouse
     autoload :Riak,       'storehouse/adapter/riak'
     autoload :Redis,      'storehouse/adapter/redis'
     autoload :S3,         'storehouse/adapter/s3'
+    autoload :InMemory,   'storehouse/adapter/in_memory'
   end
 
   class << self

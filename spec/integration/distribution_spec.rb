@@ -4,10 +4,11 @@ describe 'distribution' do
 
   let(:path){ Rails.root.join('public', 'cache', 'users', "#{@user.id}.html") }
   let(:user_path) { "/users/#{@user.id}" }
+  
   before do
     @user = User.last || User.create(:first_name => 'Gerry', :last_name => 'Philmore')
     Storehouse.configure do |c|
-      c.adapter = 'InMemoryHash'
+      c.adapter = 'InMemory'
       c.distribute!(/users\/[0-9]+$/)
       c.hook_controllers!
     end
