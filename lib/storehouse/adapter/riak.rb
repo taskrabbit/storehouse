@@ -6,9 +6,9 @@ module Storehouse
 
       def initialize(options = {})
         super
-        @bucket_name = options['bucket'] || ['_page_cache', Storehouse.config.scope].compact.join('_')
-        @client_options = options['client'] || {}
-        @clearing_delta = options['clearing_delta'] || 1.week
+        @bucket_name = options[:bucket] || ['_page_cache', Storehouse.config.scope].compact.join('_')
+        @client_options = options[:client] || {}
+        @clearing_delta = options[:clearing_delta] || 1.week
       end
 
       protected

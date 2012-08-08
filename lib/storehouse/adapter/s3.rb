@@ -6,8 +6,8 @@ module Storehouse
 
       def initialize(options = {})
         super
-        @s3_options = options['client'] || {}
-        @bucket_name = options['bucket'] || ['_page_cache', Storehouse.config.scope].compact.join('_')
+        @s3_options = options[:client] || {}
+        @bucket_name = options[:bucket] || ['_page_cache', Storehouse.config.scope].compact.join('_')
       end
 
       protected
