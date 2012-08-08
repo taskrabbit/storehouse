@@ -18,6 +18,7 @@ module Storehouse
     attr_accessor :adapter_options
     attr_accessor :ignore_query_params
     attr_accessor :continue_writing_filesystem
+    attr_accessor :middleware_filter
     attr_accessor :disabled
     attr_accessor :scope
     
@@ -64,6 +65,14 @@ module Storehouse
     def distribute?(path)
       return false if self.disabled
       list_match?(self.distribute, path)
+    end
+
+    def utilize_middleware?(env)
+      if self.middleware_filter && self.middleware_filter.respond_to?(:call)
+        self.middleware_filter.call(env)
+      else
+        true
+      end
     end
 
     def consider_caching?(path)

@@ -31,7 +31,7 @@ module Storehouse
     protected
 
     def should_care_about_request?
-      get_request? && void_of_query_string?
+      get_request? && void_of_query_string? && Storehouse.config.utilize_middleware?(@request)
     end
 
     # maybe we can use a rack::request eventually.
