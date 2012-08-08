@@ -17,9 +17,6 @@ module Storehouse
 
   class << self
 
-    cattr_accessor :config
-    cattr_accessor :store
-
     delegate :teardown!, :to => :data_store, :allow_nil => true
 
     %w(read write delete clear!).each do |meth|
@@ -32,19 +29,23 @@ module Storehouse
     end
 
     def configure
-      self.config ||= ::Storehouse::Config.new
-      yield self.config if block_given?
-      self.config
+      yield configuration if block_given?
+      configuration
     end
-
+    alias_method :config, :configure
+    
     def reset_data_store!
-      self.store = nil
+      @store = nil
     end
 
     protected
 
+    def configuration
+      @configuration ||= ::Storehouse::Config.new
+    end
+
     def data_store
-      self.store ||= begin
+      @store ||= begin
         class_name = (self.config.try(:adapter) || 'Base').to_s
         "Storehouse::Adapter::#{class_name}".constantize.new(self.config.try(:adapter_options) || {})
       end

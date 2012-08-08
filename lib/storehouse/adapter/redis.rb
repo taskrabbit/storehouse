@@ -6,8 +6,8 @@ module Storehouse
 
       def initialize(options = {})
         super
-        @client_options = options[:client] || {}
-        @namespace = options[:namespace] || ['_page_cache', Storehouse.config.scope].compact.join('_')
+        @client_options = options['client'] || {}
+        @namespace = options['namespace'] || ['_page_cache', Storehouse.config.scope].compact.join('_')
       end
 
       protected

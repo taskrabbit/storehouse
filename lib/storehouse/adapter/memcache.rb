@@ -6,7 +6,7 @@ module Storehouse
 
       def initialize(options = {})
         super
-        @client_options = options[:client] || {:host => 'localhost', :port => '11211'}
+        @client_options = options['client'] || {'host' => 'localhost', 'port' => '11211'}
       end
 
       protected
@@ -36,7 +36,7 @@ module Storehouse
       protected
 
       def server
-        "#{@client_options[:host]}:#{@client_options[:port]}"
+        "#{@client_options['host']}:#{@client_options['port']}"
       end
 
     end
