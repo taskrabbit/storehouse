@@ -140,6 +140,22 @@ describe Storehouse::Config do
 
   end
 
+  it 'should allow complete disabling' do
+
+    Storehouse.configure do |c|
+      c.disable!
+    end
+
+    Storehouse.should_receive(:data_store).never
+
+    Storehouse.read('test')
+    Storehouse.write('test', 'value')
+    Storehouse.config.consider_caching?('anything').should be_false
+    Storehouse.delete('test')
+    Storehouse.clear!
+
+  end
+
 
 
 end

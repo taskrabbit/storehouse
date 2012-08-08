@@ -72,6 +72,7 @@ module Storehouse
           t1 = [t1, t].min
 
           bucket.get_index(index_name, t0.to_i...t1.to_i).each do |k|
+            puts "Storehouse deleting: #{k}"
             bucket.delete(k)
           end
 

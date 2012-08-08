@@ -57,6 +57,7 @@ module Storehouse
       self.except = []
       self.only = []
       self.distribute = []
+      self.enable!
       Storehouse.reset_data_store!
     end
 
