@@ -21,10 +21,10 @@ module Storehouse
         object = bucket.get(path)
         
         expiration = object.indexes['expires_at_int']
-        expiration = expiration.first if expiration.respond_to?(:first)
+        expiration = expiration.first if expiration.respond_to?(:first) # might come back as a Set
 
         if expiration && expiration < Time.now.to_i
-          delete(path)
+          object.indexes['expires_at_int'] = Time.now.to_i + 10
           nil
         else
           object.data
@@ -40,9 +40,8 @@ module Storehouse
         object.data = content
 
         
-        if expiration = expires_at(options)
-          object.indexes['expires_at_int'] = expiration.to_i
-        end
+        expiration = expires_at(options)
+        object.indexes['expires_at_int'] = expiration.try(:to_i)
         object.indexes['created_at_int'] = Time.now.to_i
 
         object.store
