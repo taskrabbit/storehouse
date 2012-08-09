@@ -9,9 +9,9 @@ module Storehouse
     def call(env)
       @request = env
 
-      if should_care_about_request?
+      if should_care_about_request? && ::Storehouse.config.consider_caching?(request_path)
           
-        @content = ::Storehouse.config.consider_caching?(request_path) ? ::Storehouse.read(request_path) : nil
+        @content =  ::Storehouse.read(request_path)
 
         if @content
           write_to_filesystem! if can_write_to_filesystem? && ::Storehouse.config.distribute?(request_path)
@@ -20,7 +20,7 @@ module Storehouse
 
       end
 
-      @app.call(env)
+      @app.call(@request)
 
     ensure
       ::Storehouse.teardown!
@@ -31,7 +31,7 @@ module Storehouse
     protected
 
     def should_care_about_request?
-      get_request? && void_of_query_string? && Storehouse.config.utilize_middleware?(@request)
+      get_request? && void_of_query_string? && ::Storehouse.config.utilize_middleware?(@request)
     end
 
     # maybe we can use a rack::request eventually.

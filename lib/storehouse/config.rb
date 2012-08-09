@@ -14,18 +14,33 @@ module Storehouse
     end
 
 
+    # the name of the adapter to use
     attr_accessor :adapter
+
+    # the options to pass to the adapter
     attr_accessor :adapter_options
+
+    # should we server cached content when query params are present?
     attr_accessor :ignore_query_params
+
+    # upon caching, should we continue writing files to the filesysytem, even if we're pushing them to storehouse
     attr_accessor :continue_writing_filesystem
+
+    # something that responds to call(). return true if the middleware filter should allow the request through, false otherwise
     attr_accessor :middleware_filter
+
+    # completely disable storehouse
     attr_accessor :disabled
+
+    # the scope of the storage mechanism
     attr_accessor :scope
     
+
+    # these are lists that are evaluated to determine if storehouse should consider caching the supplied path
     config_list :distribute, :except, :only
     alias_method :ignore!, :except!
 
-
+    # only hook controllers when the app tells us to - page caching would be lost otherwise
     def hook_controllers!
       ActionController::Base.extend Storehouse::Controller
     end
@@ -53,12 +68,9 @@ module Storehouse
     end
 
     def reset!
-      self.adapter = nil
-      self.adapter_options = nil
-      self.except = []
-      self.only = []
-      self.distribute = []
-      self.enable!
+      self.instance_variables.each do |var|
+        self.instance_variable_set(var, nil)
+      end
       Storehouse.reset_data_store!
     end
 
@@ -67,6 +79,7 @@ module Storehouse
       list_match?(self.distribute, path)
     end
 
+    # should the middleware be used based on the the current request (env)
     def utilize_middleware?(env)
       if self.middleware_filter && self.middleware_filter.respond_to?(:call)
         self.middleware_filter.call(env)
@@ -75,6 +88,7 @@ module Storehouse
       end
     end
 
+    # should storehouse consider caching (or reading the cache) of path
     def consider_caching?(path)
       return false  if self.disabled
       return true   if self.except.blank? && self.only.blank?

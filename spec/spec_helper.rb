@@ -26,6 +26,7 @@ module GlobalMethods
 
   def reset
     Storehouse.config.try(:reset!)
+    ::Riak.disable_list_keys_warnings = true if defined?(::Riak)
     dir = Rails.root.join('public', 'cache')
     system("rm -r #{dir}") if File.exists?(dir)
   end

@@ -2,6 +2,7 @@ class UsersController < ApplicationController
 
   caches_page :show, :account
   caches_page :index, :expires_in => 10.minutes
+  caches_page :settings, :storehouse => false
   cache_sweeper :user_sweeper, :only => [ :touch ]
   
   def index
@@ -14,6 +15,11 @@ class UsersController < ApplicationController
 
   def account
     @user = User.find(params[:id])
+  end
+
+  def settings
+    @user = User.find(params[:id])
+    render :text => 'settings'
   end
 
   def touch

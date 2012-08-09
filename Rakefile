@@ -7,7 +7,7 @@ task :spec3 do
   info(3)
   dir = File.dirname(__FILE__)
   system("cd #{dir} && rvm gemset create mockery3 && rm Gemfile.lock")
-  system("cd #{dir} && rvm gemset use mockery3 && (RAILS_VERSION=3 bundle check || RAILS_VERSION=3 bundle install) && RAILS_VERSION=3 bundle exec rspec")
+  system("cd #{dir} && rvm gemset use mockery3 && (RAILS_VERSION=3 bundle check || RAILS_VERSION=3 bundle install) && RAILS_VERSION=3 bundle exec rspec -d")
 end
 
 task :spec2 do

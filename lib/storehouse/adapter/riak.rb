@@ -7,7 +7,7 @@ module Storehouse
       def initialize(options = {})
         super
         @bucket_name = options[:bucket] || ['_page_cache', Storehouse.config.scope].compact.join('_')
-        @client_options = options[:client] || {}
+        @client_options = options[:client] || {:host => 'localhost', :http_port => '8098'}
         @clearing_delta = options[:clearing_delta] || 1.week
       end
 

@@ -15,4 +15,5 @@ group :development, :test do
   gem 'aws-sdk'  
   gem 'rspec-core' unless  rails_version == '2'
   gem 'rspec-rails', (rails_version == '2' ? '1.3.4' : '2.10.1')
+  gem 'ruby-debug'
 end

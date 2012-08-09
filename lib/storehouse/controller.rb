@@ -1,15 +1,13 @@
 module Storehouse
   module Controller
 
+    STOREHOUSE_OPTIONS = [:expires_at, :expires_in, :storehouse]
+
     def self.extended(base)
       base.instance_eval do
         cattr_accessor :storehouse_page_cache_options
         cattr_accessor :storehouse_page_cache_action
       end
-    end
-
-    def set_storehouse_caching_options(options = {})
-      self.storehouse_page_cache_options = options.slice(:expires_in, :expires_at, :storehouse)
     end
 
     def caches_page(*actions)
@@ -19,7 +17,7 @@ module Storehouse
       unless options.blank?
         self.storehouse_page_cache_options ||= {}
         actions.each do |action|
-          self.storehouse_page_cache_options[action] = options
+          self.storehouse_page_cache_options[action] = options.slice(*STOREHOUSE_OPTIONS)
         end
       end
 

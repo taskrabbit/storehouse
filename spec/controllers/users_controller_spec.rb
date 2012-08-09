@@ -75,4 +75,16 @@ describe UsersController do
 
   end
 
+  context 'bypassing storehouse' do
+
+    it 'should not attempt to send the cache to storehouse if the :storehouse option is false' do
+      Storehouse.send(:data_store).should_receive(:write).never
+
+      get :settings, :id => @user
+      response.should be_success
+
+    end
+
+  end
+
 end
