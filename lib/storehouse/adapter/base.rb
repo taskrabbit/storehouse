@@ -39,6 +39,12 @@ module Storehouse
         end
       end
 
+      def _expire_nonstop_attempt!(key)
+        with_timeout(:write) do
+          expire_nonstop_attempt!(scoped_key(key))
+        end
+      end
+
       protected
 
       def options
@@ -59,6 +65,10 @@ module Storehouse
 
       def clear!(pattern = nil)
         # implement this method to clear the entire cache
+      end
+
+      def expire_nonstop_attempt!(key)
+        # implement if you want to allow nonstop caching
       end
 
       def scoped_key(path)

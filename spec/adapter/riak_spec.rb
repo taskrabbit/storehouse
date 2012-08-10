@@ -77,7 +77,12 @@ describe Storehouse::Adapter::Riak do
         expires_at = Time.now.to_i + 10
         store._write('expires_in_test', 'value', :expires_in => 10)
         index = bucket.get('storehouse_tests::expires_in_test').indexes['expires_at_int'].first
-        index.should be_within(1).of(expires_at.to_i)
+        
+        if $rails_version == '2'
+          index.should be_within(1).of(expires_at.to_i)
+        else
+          index.should be_close(expires_at.to_i, 1)
+        end
       end
 
       it 'should read a key properly' do
@@ -92,6 +97,43 @@ describe Storehouse::Adapter::Riak do
       end
 
     end
+
+    context 'and nonstop configured' do
+
+      before do
+        Storehouse.configure do |c|
+          c.adapter_options = {:non_stop => true}
+        end
+        store._write('nonstop1', 'value', :expires_at => Time.now.to_i - 1)
+      end
+
+      it 'should allow a nonstop configuration' do
+        store.send(:nonstop?).should be_true
+      end
+
+      it 'should set the attempting index' do
+        bucket.get('storehouse_tests::nonstop1').indexes['attempting_int'].first.should eql(0)
+      end
+
+      it 'should read the attempting index, if 0, set it and return nil' do
+        store._read('nonstop1').should be_nil
+        bucket.get('storehouse_tests::nonstop1').indexes['attempting_int'].first.should eql(1)
+        store._expire_nonstop_attempt!('nonstop1')
+        bucket.get('storehouse_tests::nonstop1').indexes['attempting_int'].first.should eql(0)
+      end
+
+      it 'should read the attempting index, if 1, return the object value' do
+        store._read('nonstop1').should be_nil
+
+        object = bucket.get('storehouse_tests::nonstop1')
+        object.data.should eql('value')
+        object.indexes['attempting_int'].first.should eql(1)
+
+        store._read('nonstop1').should eql('value')
+      end
+
+    end
+
 
   end
 
