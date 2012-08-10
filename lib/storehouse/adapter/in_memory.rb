@@ -3,6 +3,7 @@ module Storehouse
     class InMemory < Base
 
       def initialize(options = {})
+        super
         @data = {}
       end
 

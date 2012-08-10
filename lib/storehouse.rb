@@ -19,7 +19,7 @@ module Storehouse
 
     delegate :teardown!, :to => :data_store, :allow_nil => true
 
-    %w(read write delete clear!).each do |meth|
+    %w(read write delete clear! expire_nonstop_attempt!).each do |meth|
       class_eval <<-EV
         def #{meth}(*args)
           return nil if self.config.disabled

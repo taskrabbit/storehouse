@@ -1,3 +1,5 @@
+require 'timeout'
+
 module Storehouse
   module Adapter
     class Base
@@ -13,22 +15,41 @@ module Storehouse
       end
 
       def _read(key)
-        read(scoped_key(key))
+        with_timeout(:read) do
+          read(scoped_key(key))
+        end
       end
 
       def _write(key, value, options = {})
-        write(scoped_key(key), value, options)
+        with_timeout(:write) do
+          write(scoped_key(key), value, options)
+        end
       end
 
       def _delete(key)
-        delete(scoped_key(key))
+        with_timeout(:delete) do
+          delete(scoped_key(key))
+        end
       end
 
       def _clear!(pattern = nil)
         pattern ||= Storehouse.config.scope ? "#{Storehouse.config.scope}*" : nil
-        clear!(pattern)
+        with_timeout(:clear, 3600) do
+          clear!(pattern)
+        end
       end
+
+      def _expire_nonstop_attempt!(key)
+        with_timeout(:write) do
+          expire_nonstop_attempt!(scoped_key(key))
+        end
+      end
+
       protected
+
+      def options
+        @options ||= {}
+      end
 
       def read(key)
         nil # implement this method to return content
@@ -46,18 +67,36 @@ module Storehouse
         # implement this method to clear the entire cache
       end
 
+      def expire_nonstop_attempt!(key)
+        # implement if you want to allow nonstop caching
+      end
+
       def scoped_key(path)
         [Storehouse.config.scope, path].compact.join('::')
       end
 
-      def ttl(options)
-        options[:expires_in]
+      def timeout_length(type = :read)
+        timeout = self.options[:timeout]
+        if self.options[:timeout].is_a?(Hash)
+          timeout = self.options[:timeout][type]
+        end
+        timeout
       end
 
-      def expires_at(options)
-        expiration = ttl(options)
+      def with_timeout(type, default = 60)
+        Timeout::timeout(timeout_length(type) || default) do 
+          yield
+        end
+      end
+
+      def ttl(opts)
+        opts[:expires_in]
+      end
+
+      def expires_at(opts)
+        expiration = ttl(opts)
         expiration = Time.now + expiration if expiration
-        expiration ||= options[:expires_at]
+        expiration ||= opts[:expires_at]
         expiration
       end
 
