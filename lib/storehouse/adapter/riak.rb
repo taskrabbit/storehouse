@@ -9,6 +9,7 @@ module Storehouse
         @bucket_name = options[:bucket] || ['_page_cache', Storehouse.config.scope].compact.join('_')
         @client_options = options[:client] || {:host => 'localhost', :http_port => '8098'}
         @clearing_delta = options[:clearing_delta] || 1.week
+        @nonstop = options[:non_stop]
       end
 
       protected
@@ -20,11 +21,18 @@ module Storehouse
       def read(path)
         object = bucket.get(path)
         
-        expiration = object.indexes['expires_at_int']
-        expiration = expiration.first if expiration.respond_to?(:first) # might come back as a Set
+        expiration = value_from_index(object, 'expires_at_int')
 
+        # if it's expired
         if expiration && expiration < Time.now.to_i
-          object.indexes['expires_at_int'] = Time.now.to_i + 10
+
+          return nil unless nonstop?
+            
+          currently_attempting = value_from_index(object, 'attempting_int').to_i > 0
+          return object.data if currently_attempting
+
+          object.indexes['attempting_int'] = 1
+          object.store
           nil
         else
           object.data
@@ -43,6 +51,7 @@ module Storehouse
         expiration = expires_at(options)
         object.indexes['expires_at_int'] = expiration.try(:to_i)
         object.indexes['created_at_int'] = Time.now.to_i
+        object.indexes['attempting_int'] = 0
 
         object.store
       
@@ -54,6 +63,14 @@ module Storehouse
 
       def clear!(pattern = nil)
         chunked_delete('created_at_int', 1.year.ago)
+      end
+
+      def expire_nonstop_attempt!(path)
+        object = bucket.get(path)
+        if object.data
+          object.indexes['attempting_int'] = 0
+          object.store
+        end
       end
 
       def clear_expired!
@@ -78,6 +95,15 @@ module Storehouse
           t0 += @clearing_delta
 
         end while(t0 < t)
+      end
+
+      def value_from_index(object, name)
+        val = object.indexes[name]
+        val.respond_to?(:first) ? val.first : val # might come back as a Set
+      end
+
+      def nonstop?
+        !!@nonstop
       end
 
     end
