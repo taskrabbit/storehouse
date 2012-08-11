@@ -71,6 +71,9 @@ module Storehouse
           object.indexes['attempting_int'] = 0
           object.store
         end
+
+      rescue # 404's etc
+        nil
       end
 
       def clear_expired!

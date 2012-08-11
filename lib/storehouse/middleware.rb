@@ -9,8 +9,11 @@ module Storehouse
     def call(env)
       @request = env
 
+      @expire_nonstop = false
+
       if should_care_about_request? && ::Storehouse.config.consider_caching?(request_path)
-          
+      
+        @expire_nonstop = true
         @content =  ::Storehouse.read(request_path)
 
         if @content
@@ -23,7 +26,7 @@ module Storehouse
       @app.call(@request)
 
     ensure
-      ::Storehouse.expire_nonstop_attempt!(request_path)
+      ::Storehouse.expire_nonstop_attempt!(request_path) if @expire_nonstop
       ::Storehouse.teardown!
     end
 
