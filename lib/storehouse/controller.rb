@@ -27,9 +27,11 @@ module Storehouse
     end
 
     def expire_page(path)
-      storehouse_benchmark :expire_page, path do
+
+      instrument_page_cache :expire_page, path do
         Storehouse.delete(path)
       end unless Storehouse.config.disabled
+      
       super
     end
 
@@ -40,41 +42,15 @@ module Storehouse
       use_cache = (options[:storehouse].nil? || options[:storehouse]) && Storehouse.config.consider_caching?(path)
 
       if !use_cache || Storehouse.config.continue_writing_filesystem || Storehouse.config.distribute?(path)
-        begin
-          super
-        rescue Exception => e # rails 2 vs rails 3
-          if e.message =~ /wrong number of arguments/
-            super(content, path)
-          else
-            raise e
-          end
-        end
+        super
       end
 
       if use_cache
-        storehouse_benchmark :write_page, path do
+        instrument_page_cache :write_page, path do
           Storehouse.write(path, content, options)
         end
       end
     
-    end
-
-    protected
-
-    def storehouse_benchmark(key, path)
-      if respond_to?(:benchmark)
-        statement = key == :expire_page ? 'Expired storehouse page' : 'Cached storehouse page'
-
-        benchmark "#{statement}: #{path}" do
-          yield
-        end
-      elsif respond_to?(:instrument_page_cache)
-        instrument_page_cache key, path do
-          yield
-        end
-      else
-        yield
-      end
     end
 
 
