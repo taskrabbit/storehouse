@@ -79,9 +79,9 @@ describe Storehouse::Adapter::Riak do
         index = bucket.get('storehouse_tests::expires_in_test').indexes['expires_at_int'].first
         
         if $rails_version == '2'
-          index.should be_within(1).of(expires_at.to_i)
-        else
           index.should be_close(expires_at.to_i, 1)
+        else
+          index.should be_within(1).of(expires_at.to_i)
         end
       end
 

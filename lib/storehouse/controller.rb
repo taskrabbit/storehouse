@@ -49,7 +49,9 @@ module Storehouse
             raise e
           end
         end
-      elsif use_cache
+      end
+
+      if use_cache
         storehouse_benchmark :write_page, path do
           Storehouse.write(path, content, options)
         end
