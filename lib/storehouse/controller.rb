@@ -36,7 +36,8 @@ module Storehouse
     end
 
     def cache_page(content, path, extension = nil)
-      
+      return unless perform_caching
+
       options = self.storehouse_page_cache_action && self.storehouse_page_cache_options.try(:[], self.storehouse_page_cache_action) || {}
 
       use_cache = (options[:storehouse].nil? || options[:storehouse]) && Storehouse.config.consider_caching?(path)
