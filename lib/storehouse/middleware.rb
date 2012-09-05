@@ -25,6 +25,7 @@ module Storehouse
 
       @app.call(@request)
 
+      
     ensure
       ::Storehouse.expire_nonstop_attempt!(request_path) if @expire_nonstop
       ::Storehouse.teardown!

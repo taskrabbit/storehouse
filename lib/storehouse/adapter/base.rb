@@ -83,7 +83,7 @@ module Storehouse
         timeout
       end
 
-      def with_timeout(type, default = 60)
+      def with_timeout(type, default = 5)
         Timeout::timeout(timeout_length(type) || default) do 
           yield
         end

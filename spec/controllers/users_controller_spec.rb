@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe UsersController do
-  ENV['RAILS_VERSION'] == '2' ? integrate_views : render_views
+  render_views
 
   before do
     @user = User.last || User.create(:first_name => 'Gerry', :last_name => 'Philmore')
@@ -17,8 +17,8 @@ describe UsersController do
     before do
 
       original_method = controller.method(:cache_page)
-      controller.should_receive(:cache_page).once do |*args|
-        original_method.call(*args)
+      controller.should_receive(:cache_page).once do |content, path, gzip|
+        original_method.call(content, path, gzip)
       end
 
     end

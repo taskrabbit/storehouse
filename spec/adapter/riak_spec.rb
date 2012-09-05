@@ -3,10 +3,10 @@ require 'spec_helper'
 describe Storehouse::Adapter::Riak do
 
   before do
-    check_connectivity
     Storehouse.configure do |c|
       c.adapter = 'Riak'
     end
+    check_connectivity
   end
 
   let(:store){ Storehouse.send(:data_store) }
@@ -135,12 +135,6 @@ describe Storehouse::Adapter::Riak do
     end
 
 
-  end
-
-
-  def check_connectivity
-    pending unless defined?(Riak::Client)
-    pending unless (Storehouse::Adapter::Riak.new.send(:bucket) rescue nil)
   end
 
   # let riak reflect the changes

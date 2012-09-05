@@ -31,8 +31,11 @@ module Storehouse
           currently_attempting = value_from_index(object, 'attempting_int').to_i > 0
           return object.data if currently_attempting
 
+          # make it so this object is now attempting to be updated
           object.indexes['attempting_int'] = 1
           object.store
+
+          # continue to return nil so hopefully this request will update the cache
           nil
         else
           object.data
@@ -65,6 +68,8 @@ module Storehouse
         chunked_delete('created_at_int', 1.year.ago)
       end
 
+      # the request that was attempting an update is finished
+      # make sure we reset the index whether or not the bucket was updated with a new value
       def expire_nonstop_attempt!(path)
         object = bucket.get(path)
         if object.data

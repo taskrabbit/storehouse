@@ -35,7 +35,7 @@ module Storehouse
       super
     end
 
-    def cache_page(content, path, extension = nil)
+    def cache_page(content, path, extension = nil, gzip = Zlib::BEST_COMPRESSION)
       return unless perform_caching
 
       options = self.storehouse_page_cache_action && self.storehouse_page_cache_options.try(:[], self.storehouse_page_cache_action) || {}

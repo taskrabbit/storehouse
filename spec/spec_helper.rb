@@ -4,10 +4,7 @@
 # loaded once.
 #
 
-$rails_version = ENV['RAILS_VERSION'] || '2'
-ENV['RAILS_VERSION'] = $rails_version.to_s
-
-require "mockery#{$rails_version}/config/environment.rb"
+require "mockery3/config/environment.rb"
 
 
 module GlobalMethods
@@ -31,27 +28,28 @@ module GlobalMethods
     system("rm -r #{dir}") if File.exists?(dir)
   end
 
+
+  def check_connectivity
+    case Storehouse.config.adapter
+    when 'Riak'
+      pending unless defined?(Riak::Client)
+      pending unless (Storehouse::Adapter::Riak.new.send(:bucket) rescue nil)
+    else
+      return
+    end
+  end
+
 end
 
-if $rails_version == '2'
-  require 'spec/rails'
-  Spec::Runner.configure do |config|
-    config.include GlobalMethods
-    config.before do
-      reset()
-    end
+require 'rspec/rails'
+# See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+RSpec.configure do |config|
+  config.treat_symbols_as_metadata_keys_with_true_values = true
+  config.run_all_when_everything_filtered = true
+  config.filter_run :focus
+  config.include GlobalMethods
+  config.before do
+    reset()
   end
-else 
-  require 'rspec/rails'
-  # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-  RSpec.configure do |config|
-    config.treat_symbols_as_metadata_keys_with_true_values = true
-    config.run_all_when_everything_filtered = true
-    config.filter_run :focus
-    config.include GlobalMethods
-    config.before do
-      reset()
-    end
 
-  end
 end
