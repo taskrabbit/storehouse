@@ -35,4 +35,34 @@ describe 'distribution' do
     File.file?(path).should be_true
   end
 
+  context 'with a reheat param' do
+
+    before do
+      Storehouse.configure do |c|
+        c.adapter = 'InMemory'
+        c.distribute!('/')
+        c.reheat_parameter = 'reheatme'
+      end
+    end
+
+    it 'should strip the query string when the reheat param is set' do
+      get '/', :reheatme => true
+      response.body.should eql('')
+    end
+
+    it 'should write to the file system after passing through a distributed path' do
+      ActionController::Base.should_receive(:cache_page)
+      get '/', :reheatme => true
+    end
+
+    it 'should not write a file when more params are present' do
+      ActionController::Base.should_receive(:cache_page).never
+      get '/', :reheatme => true, :hey => 'something'
+    end
+
+
+
+
+  end
+
 end

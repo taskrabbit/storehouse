@@ -7,6 +7,7 @@ module Storehouse
 
 
     def call(env)
+
       @request = env
 
       @expire_nonstop = false
@@ -14,7 +15,7 @@ module Storehouse
       if should_care_about_request? && ::Storehouse.config.consider_caching?(request_path)
       
         @expire_nonstop = true
-        @content =  ::Storehouse.read(request_path)
+        @content = ::Storehouse.read(request_path)
 
         if @content
           write_to_filesystem! if can_write_to_filesystem? && ::Storehouse.config.distribute?(request_path)
@@ -46,7 +47,20 @@ module Storehouse
     end
 
     def void_of_query_string?
-      ::Storehouse.config.ignore_query_params || @request['QUERY_STRING'].to_s.length == 0
+      ::Storehouse.config.ignore_query_params     || 
+      @request['QUERY_STRING'].to_s.length == 0   ||
+      should_reheat?
+    end
+
+    def should_reheat?
+      param_to_look_for = ::Storehouse.config.reheat_parameter
+      reheating = param_to_look_for && !!(@request['QUERY_STRING'] =~ /^#{param_to_look_for}([^&]+)?$/)
+      
+      # clear the query string so rails so the app won't think anything is abnormal
+      if reheating
+        @request['QUERY_STRING'] = ''
+      end
+      !reheating
     end
 
     def request_path

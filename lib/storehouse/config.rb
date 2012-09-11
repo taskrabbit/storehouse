@@ -34,6 +34,9 @@ module Storehouse
 
     # the scope of the storage mechanism
     attr_accessor :scope
+
+    # the parameter that's passed when we want to reheat the cache
+    attr_accessor :reheat_parameter
     
 
     # these are lists that are evaluated to determine if storehouse should consider caching the supplied path
