@@ -40,7 +40,8 @@ module Storehouse
         else
           object.data
         end
-      rescue # any error coming from the client will be consumed
+      rescue Exception => e # any error coming from the client will be consumed
+        Storehouse.config.report_error(e)
         nil
       end
 
@@ -77,7 +78,8 @@ module Storehouse
           object.store
         end
 
-      rescue # 404's etc
+      rescue Exception => e # 404's etc
+        Storehouse.config.report_error(e)
         nil
       end
 

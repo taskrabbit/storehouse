@@ -77,16 +77,21 @@ module Storehouse
 
       def timeout_length(type = :read)
         timeout = self.options[:timeout]
-        if self.options[:timeout].is_a?(Hash)
-          timeout = self.options[:timeout][type]
+        if timeout.is_a?(Hash)
+          timeout = timeout[type]
         end
         timeout
       end
 
       def with_timeout(type, default = 5)
+
         Timeout::timeout(timeout_length(type) || default) do 
           yield
         end
+
+      rescue Timeout::Error => e
+        Storehouse.config.report_error(e)
+        nil  
       end
 
       def ttl(opts)

@@ -156,6 +156,4 @@ describe Storehouse::Config do
 
   end
 
-
-
 end

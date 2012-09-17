@@ -28,11 +28,30 @@ describe Storehouse::Adapter::Base do
 
   it 'should timeout for long running requests' do
 
+    Storehouse.configure do |c|
+      c.error_receiver = lambda{|e| raise e }
+    end
+
     lambda{ store._read('1') }.should_not raise_error
     lambda{ store._read('3') }.should raise_error(Timeout::Error)
     lambda{ store._write('3', 'val') }.should_not raise_error
     lambda{ store._write('5', 'val') }.should raise_error(Timeout::Error)
 
+  end
+
+  it 'should report errors to the error receiver' do
+    @error_caught = nil
+    Storehouse.configure do |c|
+      c.error_receiver = lambda{|e| @error_caught = e }
+    end
+
+    Storehouse.stub(:data_store).and_return(store)
+
+    Storehouse.read('3')
+
+
+    @error_caught.is_a?(Timeout::Error).should be_true
+    
   end
 
 end

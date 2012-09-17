@@ -37,6 +37,9 @@ module Storehouse
 
     # the parameter that's passed when we want to reheat the cache
     attr_accessor :reheat_parameter
+
+    # the thing that is provided with errors when something blows up
+    attr_accessor :error_receiver
     
 
     # these are lists that are evaluated to determine if storehouse should consider caching the supplied path
@@ -54,6 +57,11 @@ module Storehouse
 
     def enable!
       self.disabled = false
+    end
+
+    def report_error(e)
+      self.error_receiver.try(:call, e)
+      nil
     end
 
     def adapter=(adap, options = nil)
