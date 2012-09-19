@@ -32,7 +32,7 @@ module Storehouse
           return object.data if currently_attempting
 
           # make it so this object is now attempting to be updated
-          object.indexes['attempting_int'] = 1
+          object.indexes['attempting_int'] << 1
           object.store
 
           # continue to return nil so hopefully this request will update the cache
@@ -53,9 +53,9 @@ module Storehouse
 
         
         expiration = expires_at(options)
-        object.indexes['expires_at_int'] = expiration.try(:to_i)
-        object.indexes['created_at_int'] = Time.now.to_i
-        object.indexes['attempting_int'] = 0
+        object.indexes['expires_at_int'] << expiration.try(:to_i)
+        object.indexes['created_at_int'] << Time.now.to_i
+        object.indexes['attempting_int'] << 0
 
         object.store
       
@@ -74,7 +74,7 @@ module Storehouse
       def expire_nonstop_attempt!(path)
         object = bucket.get(path)
         if object.data
-          object.indexes['attempting_int'] = 0
+          object.indexes['attempting_int'] << 0
           object.store
         end
 
