@@ -38,7 +38,7 @@ module Storehouse
     def cache_page(*args)
       return unless perform_caching
 
-      content, path = args[0..1]
+      content, path = args[0..1] # compatibility between rails 3.0.x and 3.2.x
       options = self.storehouse_page_cache_action && self.storehouse_page_cache_options.try(:[], self.storehouse_page_cache_action) || {}
 
       use_cache = (options[:storehouse].nil? || options[:storehouse]) && Storehouse.config.consider_caching?(path)

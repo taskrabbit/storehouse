@@ -2,12 +2,22 @@
 # specs live under a `spec` directory, which RSpec adds to the `$LOAD_PATH`.
 # Require this file using `require "spec_helper.rb"` to ensure that it is only
 # loaded once.
-#
-
-require "mockery3/config/environment.rb"
 
 
-module GlobalMethods
+require 'rails/all'
+require 'storehouse'
+require 'delorean'
+
+# See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+RSpec.configure do |config|
+  config.treat_symbols_as_metadata_keys_with_true_values = true
+  config.run_all_when_everything_filtered = true
+  config.filter_run :focus
+
+  config.before do
+    reset()
+  end
+
   def get_storehouse_middleware
     Rails.configuration.middleware.select{|m| m.klass.name =~ /Storehouse/}.first
   end
@@ -24,8 +34,6 @@ module GlobalMethods
   def reset
     Storehouse.config.try(:reset!)
     ::Riak.disable_list_keys_warnings = true if defined?(::Riak)
-    dir = Rails.root.join('public', 'cache')
-    system("rm -r #{dir}") if File.exists?(dir)
   end
 
 
@@ -37,19 +45,6 @@ module GlobalMethods
     else
       return
     end
-  end
-
-end
-
-require 'rspec/rails'
-# See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
-RSpec.configure do |config|
-  config.treat_symbols_as_metadata_keys_with_true_values = true
-  config.run_all_when_everything_filtered = true
-  config.filter_run :focus
-  config.include GlobalMethods
-  config.before do
-    reset()
   end
 
 end

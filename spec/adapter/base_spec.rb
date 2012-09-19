@@ -19,7 +19,7 @@ describe Storehouse::Adapter::Base do
     end
 
     def sleep_for(key)
-      sleep key.split('::').last.to_i # switch to delorean (no internet at the moment)
+      Delorean.time_travel_to Time.at(Time.now.to_i + key.split('::').last.to_i)
     end
 
   end
@@ -29,7 +29,7 @@ describe Storehouse::Adapter::Base do
   it 'should timeout for long running requests' do
 
     Storehouse.configure do |c|
-      c.error_receiver = lambda{|e| raise e }
+      c.error_receiver lambda{|e| raise e }
     end
 
     lambda{ store._read('1') }.should_not raise_error
@@ -40,17 +40,18 @@ describe Storehouse::Adapter::Base do
   end
 
   it 'should report errors to the error receiver' do
-    @error_caught = nil
-    Storehouse.configure do |c|
-      c.error_receiver = lambda{|e| @error_caught = e }
+    @error_provided = nil
+    handler = lambda{|e| @error_provided = e}
+
+    Storehouse.configure do
+      error_receiver handler
     end
 
     Storehouse.stub(:data_store).and_return(store)
 
     Storehouse.read('3')
 
-
-    @error_caught.is_a?(Timeout::Error).should be_true
+    @error_provided.should be_a(Timeout::Error)
     
   end
 

@@ -28,8 +28,10 @@ module Storehouse
       EV
     end
 
-    def configure
-      yield configuration if block_given?
+    def configure(&block)
+      if block_given?
+        configuration.instance_eval(&block)
+      end
       configuration
     end
     alias_method :config, :configure

@@ -4,7 +4,7 @@ describe Storehouse::Adapter::Riak do
 
   before do
     Storehouse.configure do |c|
-      c.adapter = 'Riak'
+      c.adapter 'Riak'
     end
     check_connectivity
   end

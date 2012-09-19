@@ -23,23 +23,23 @@ Or install it yourself as:
 Create an initializer to configure your storehouse integration:
 
     # config/intializers/storehouse.rb
-    Storehouse.configure do |c|
-      c.adapter = 'Riak'                                          # the adapter to use
-      c.adapter_options = {:bucket => '_page_cached_content'}     # pass options that are provided to the adapter instance
-      c.continue_writing_filesystem = true                        # should storehouse allow rails to continue writing to the filesystem?
-      c.ignore_query_params = false                               # should storehouse ignore query params when choosing a cached object?
+    Storehouse.configure do
+      adapter = 'Riak'                                          # the adapter to use
+      adapter_options = {:bucket => '_page_cached_content'}     # pass options that are provided to the adapter instance
+      continue_writing_filesystem = true                        # should storehouse allow rails to continue writing to the filesystem?
+      ignore_query_params = false                               # should storehouse ignore query params when choosing a cached object?
 
-      c.distribute = ['/tos', '/privacy', /^\/pages\//]           # patterns or paths to match against when determining if content should be distributed
-      c.distribute!(/\/users/[\d]+/)                              # append the provided value(s) to the 'distribution' array
+      distribute = ['/tos', '/privacy', /^\/pages\//]           # patterns or paths to match against when determining if content should be distributed
+      distribute!(/\/users/[\d]+/)                              # append the provided value(s) to the 'distribution' array
 
-      c.except = ['/dynamic_page']                                # opt out of caching this page using storehouse
-      c.except!('/tos')                                           # append the provided value(s) to the 'except' array
-      c.ignore!('/about')                                         # alias for c.except!
+      except = ['/dynamic_page']                                # opt out of caching this page using storehouse
+      except!('/tos')                                           # append the provided value(s) to the 'except' array
+      ignore!('/about')                                         # alias for c.except!
 
-      c.only = ['/tos', '/privacy']                               # only cache these pages or patterns in storehouse
-      c.only!('/about')                                           # append the provided value(s) to the 'only' array
+      only = ['/tos', '/privacy']                               # only cache these pages or patterns in storehouse
+      only!('/about')                                           # append the provided value(s) to the 'only' array
 
-      c.hook_controllers!                                         # hook ActionController::Base's expire_page and cache_page with storehouse
+      hook_controllers!                                         # hook ActionController::Base's expire_page and cache_page with storehouse
     end
 
 Include the middleware into your app:
@@ -56,8 +56,8 @@ For more flexibility you can also provide Storehouse's configuration with an arr
 
     # config/initializers/storehouse.rb
     Storehouse.configure do |c|
-      c.only! '/tos', {/\/pages\// => lambda{|path| path.length == 12 }}
-      c.except! '/privacy', [/\/pages\//, lambda{|path| path.ends_with?('t') }]
+      only! '/tos', {/\/pages\// => lambda{|path| path.length == 12 }}
+      except! '/privacy', [/\/pages\//, lambda{|path| path.ends_with?('t') }]
     end
 
 Pointless examples, but the ability to configure is there. The `function` just needs to respond to `call()` so you can use whatever you want there.
