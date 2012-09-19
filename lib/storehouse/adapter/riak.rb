@@ -41,7 +41,7 @@ module Storehouse
           object.data
         end
       rescue Exception => e # any error coming from the client will be consumed
-        Storehouse.config.report_error(e)
+        Storehouse.config.report_error(e) unless e.message.to_s =~ /not found/
         nil
       end
 
