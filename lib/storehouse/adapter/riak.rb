@@ -52,8 +52,9 @@ module Storehouse
         object.data = content
 
         
-        expiration = expires_at(options)
-        object.indexes['expires_at_int'] << expiration.try(:to_i)
+        expiration = expires_at(options).try(:to_i)
+
+        object.indexes['expires_at_int'] << expiration if expiration
         object.indexes['created_at_int'] << Time.now.to_i
         object.indexes['attempting_int'] << 0
 
