@@ -3,69 +3,86 @@ module Storehouse
 
     def self.config_list(*names)
       names.each do |name|
-        class_eval <<-EV
-          attr_accessor :#{name}
-          def #{name}!(*paths)
-            self.#{name} ||= []
-            self.#{name} |= paths.map{|p| Array(p) }.flatten(1)
+        class_eval <<-EV, __FILE__, __LINE__ + 1
+          attr_reader :#{name}
+          def #{name}(*paths)
+            @#{name} ||= []
+            @#{name} |= paths
+            @#{name}
           end
+        EV
+      end
+    end
+
+    # provides a getter and a setter with the same method
+    # config_setting :dog
+    #   --> dog 'Husky' :=> 'Husky' (setter)
+    #   --> dog :=> 'Husky' (getter)
+    def self.config_setting(*names)
+      names.each do |name|
+        class_eval <<-EV, __FILE__, __LINE__ + 1
+          attr_reader :#{name}
+          
+          def #{name}_with_configuration(value = nil)
+            return #{name}_without_configuration if value.nil?
+            @#{name} = value
+            send("on_#{name}_change", value) if respond_to?("on_#{name}_change")
+            value
+          end
+
+          alias_method_chain :#{name}, :configuration
+          
         EV
       end
     end
 
 
     # the name of the adapter to use
-    attr_accessor :adapter
+    config_setting :adapter
 
     # the options to pass to the adapter
-    attr_accessor :adapter_options
+    config_setting :adapter_options
 
     # should we server cached content when query params are present?
-    attr_accessor :ignore_query_params
+    config_setting :ignore_query_params
 
     # upon caching, should we continue writing files to the filesysytem, even if we're pushing them to storehouse
-    attr_accessor :continue_writing_filesystem
+    config_setting :continue_writing_filesystem
 
     # something that responds to call(). return true if the middleware filter should allow the request through, false otherwise
-    attr_accessor :middleware_filter
+    config_setting :middleware_filter
 
     # completely disable storehouse
-    attr_accessor :disabled
+    config_setting :disabled
 
     # the scope of the storage mechanism
-    attr_accessor :scope
+    config_setting :scope
+
+    # the parameter that's passed when we want to reheat the cache
+    config_setting :reheat_parameter
+
+    # the thing that is provided with errors when something blows up
+    config_setting :error_receiver
     
 
     # these are lists that are evaluated to determine if storehouse should consider caching the supplied path
     config_list :distribute, :except, :only
-    alias_method :ignore!, :except!
+    alias_method :ignore, :except
 
-    # only hook controllers when the app tells us to - page caching would be lost otherwise
-    def hook_controllers!
-      ActionController::Base.extend Storehouse::Controller
-    end
 
     def disable!
-      self.disabled = true
+      self.disabled true
     end
 
     def enable!
-      self.disabled = false
+      self.disabled false
     end
 
-    def adapter=(adap, options = nil)
-      if options
-        self.adapter_options = options
-      else
-        Storehouse.reset_data_store!
-      end
-      @adapter = adap
+    def report_error(e)
+      self.error_receiver.try(:call, e)
+      nil
     end
 
-    def adapter_options=(opts)
-      Storehouse.reset_data_store!
-      @adapter_options = opts
-    end
 
     def reset!
       self.instance_variables.each do |var|
@@ -99,6 +116,10 @@ module Storehouse
     end
 
     protected
+
+    def on_adapter_options_change(new_value = nil)
+      Storehouse.reset_data_store!
+    end
 
     def list_match?(list, path)
       return false if list.blank?

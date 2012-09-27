@@ -14,5 +14,5 @@ Gem::Specification.new do |gem|
   gem.name          = "storehouse"
   gem.require_paths = ["lib"]
   gem.version       = Storehouse::VERSION
-  gem.add_dependency('rails', '>= 2.3')
+  gem.add_dependency('rails', '>= 3.0')
 end
