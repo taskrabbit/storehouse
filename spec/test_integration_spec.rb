@@ -11,8 +11,8 @@ describe 'Rails integration for testing' do
   end
 
   it 'should be able to change the adapter' do
-    use_middleware_adapter!('Dalli')
-    Storehouse.send(:data_store).class.name.should eql('Storehouse::Adapter::Dalli')
+    use_middleware_adapter!('Riak')
+    Storehouse.send(:data_store).class.name.should eql('Storehouse::Adapter::Riak')
   end
 
 end

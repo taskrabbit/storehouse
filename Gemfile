@@ -4,8 +4,8 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'rails', '3.2.6'
-gem 'dalli'
-gem 'memcache'
+# gem 'dalli'
+# gem 'memcache'
 gem 'riak-client'
 gem 'rspec-rails', '2.10.1'
 gem 'delorean'
