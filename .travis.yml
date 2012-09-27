@@ -4,3 +4,8 @@ rvm:
   - 1.9.2
   - 1.9.3
   - jruby
+
+gemfile:
+  - gemfiles/rails30.gemfile
+  - gemfiles/rails31.gemfile
+  - gemfiles/rails32.gemfile
