@@ -49,10 +49,10 @@ module Storehouse
     def void_of_query_string?
       ::Storehouse.config.ignore_query_params     || 
       @request['QUERY_STRING'].to_s.length == 0   ||
-      should_reheat?
+      !reheating?
     end
 
-    def should_reheat?
+    def reheating?
       param_to_look_for = ::Storehouse.config.reheat_parameter
       reheating = param_to_look_for && !!(@request['QUERY_STRING'] =~ /^#{param_to_look_for}([^&]+)?$/)
       
