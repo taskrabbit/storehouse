@@ -19,12 +19,12 @@ describe Storehouse::Adapter::Base do
     end
 
     def sleep_for(key)
-      Delorean.time_travel_to Time.at(Time.now.to_i + key.split('::').last.to_i)
+      sleep key.split('::').last.to_i
     end
 
   end
 
-  let(:store){ TimeoutAdapter.new(:timeout => {:read => 2, :write => 4, :delete => 1}) }
+  let(:store){ TimeoutAdapter.new(:timeout => {:read => 1, :write => 1, :delete => 1}) }
 
   it 'should timeout for long running requests' do
 
@@ -32,10 +32,10 @@ describe Storehouse::Adapter::Base do
       c.error_receiver lambda{|e| raise e }
     end
 
-    lambda{ store._read('1') }.should_not raise_error
-    lambda{ store._read('3') }.should raise_error(Timeout::Error)
-    lambda{ store._write('3', 'val') }.should_not raise_error
-    lambda{ store._write('5', 'val') }.should raise_error(Timeout::Error)
+    lambda{ store._read('0') }.should_not raise_error
+    lambda{ store._read('2') }.should raise_error(Timeout::Error)
+    lambda{ store._write('0', 'val') }.should_not raise_error
+    lambda{ store._write('2', 'val') }.should raise_error(Timeout::Error)
 
   end
 
@@ -49,7 +49,7 @@ describe Storehouse::Adapter::Base do
 
     Storehouse.stub(:data_store).and_return(store)
 
-    Storehouse.read('3')
+    Storehouse.read('2')
 
     @error_provided.should be_a(Timeout::Error)
     

@@ -3,10 +3,19 @@
 # Require this file using `require "spec_helper.rb"` to ensure that it is only
 # loaded once.
 
+ENV['RAILS_ENV'] ||= 'test'
 
-require 'rails/all'
-require 'storehouse'
+require 'tester/config/environment'
+require 'rspec/rails'
 require 'delorean'
+
+begin
+  require 'ruby-debug'
+rescue LoadError => e
+end
+
+require 'storehouse'
+
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
@@ -24,9 +33,9 @@ RSpec.configure do |config|
 
   def use_middleware_adapter!(name, options = {})
     Storehouse.reset_data_store!
-    Storehouse.configure do |c|
-      c.adapter = name
-      c.adapter_options = options
+    Storehouse.configure do
+      adapter name
+      adapter_options options
     end
     Storehouse.send(:data_store)
   end

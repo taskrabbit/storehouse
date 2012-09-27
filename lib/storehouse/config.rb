@@ -4,10 +4,11 @@ module Storehouse
     def self.config_list(*names)
       names.each do |name|
         class_eval <<-EV, __FILE__, __LINE__ + 1
-          attr_accessor :#{name}
-          def #{name}!(*paths)
-            self.#{name} ||= []
-            self.#{name} |= paths.map{|p| Array(p) }.flatten(1)
+          attr_reader :#{name}
+          def #{name}(*paths)
+            @#{name} ||= []
+            @#{name} |= paths
+            @#{name}
           end
         EV
       end
@@ -66,15 +67,15 @@ module Storehouse
 
     # these are lists that are evaluated to determine if storehouse should consider caching the supplied path
     config_list :distribute, :except, :only
-    alias_method :ignore!, :except!
+    alias_method :ignore, :except
 
 
     def disable!
-      self.disabled = true
+      self.disabled true
     end
 
     def enable!
-      self.disabled = false
+      self.disabled false
     end
 
     def report_error(e)
@@ -82,9 +83,6 @@ module Storehouse
       nil
     end
 
-    def adapter_options(opts)
-      @adapter_options = opts
-    end
 
     def reset!
       self.instance_variables.each do |var|

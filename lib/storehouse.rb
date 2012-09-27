@@ -1,3 +1,5 @@
+require 'storehouse/railtie' if defined?(Rails)
+
 module Storehouse
 
   autoload :VERSION,      'storehouse/version'

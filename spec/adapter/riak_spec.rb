@@ -22,7 +22,7 @@ describe Storehouse::Adapter::Riak do
 
   it 'should use the appropriate bucket name when it\'s provided' do
     Storehouse.configure do |c|
-      c.adapter_options = {:bucket => 'my_custom_bucket_name'}
+      c.adapter_options( {:bucket => 'my_custom_bucket_name'} )
     end
 
     bucket.name.should eql('my_custom_bucket_name')
@@ -32,8 +32,8 @@ describe Storehouse::Adapter::Riak do
 
     before do
       Storehouse.configure do |c|
-        c.scope = 'storehouse_tests'
-        c.adapter_options = {:bucket => 'storehouse_integration_gem_tests'}
+        c.scope 'storehouse_tests'
+        c.adapter_options( {:bucket => 'storehouse_integration_gem_tests'} )
       end
     end
 
@@ -102,7 +102,7 @@ describe Storehouse::Adapter::Riak do
 
       before do
         Storehouse.configure do |c|
-          c.adapter_options = {:non_stop => true}
+          c.adapter_options( {:non_stop => true} )
         end
         store._write('nonstop1', 'value', :expires_at => Time.now.to_i - 1)
       end

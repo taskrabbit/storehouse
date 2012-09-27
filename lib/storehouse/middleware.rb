@@ -60,7 +60,7 @@ module Storehouse
       if reheating
         @request['QUERY_STRING'] = ''
       end
-      !reheating
+      reheating
     end
 
     def request_path
