@@ -1,5 +1,7 @@
 # Storehouse
 
+[![Build Status](https://secure.travis-ci.org/taskrabbit/storehouse.png)](http://travis-ci.org/taskrabbit/storehouse)
+
 Storehouse provides a cache layer that wraps Rails' page caching strategy. It provides a middleware that returns content from a centralized cache store and writes files to your local machine on-demand, allowing distribution to multiple servers. Cache stores can be easily defined by using or creating an adapter.
 
 ## Installation
