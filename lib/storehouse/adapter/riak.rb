@@ -19,7 +19,10 @@ module Storehouse
       end
 
       def read(path)
+
         object = bucket.get(path)
+
+        return nil unless riak_object?(object)
         
         expiration = value_from_index(object, 'expires_at_int')
 
@@ -40,14 +43,14 @@ module Storehouse
         else
           object.data
         end
-      rescue Exception => e # any error coming from the client will be consumed
-        Storehouse.config.report_error(e) unless e.message.to_s =~ /not found/
-        nil
+
       end
 
       def write(path, content, options = {})
-        
         object = bucket.get_or_new(path)
+
+        return nil unless riak_object?(object)
+
         object.content_type = 'text/plain'
         object.data = content
 
@@ -59,7 +62,6 @@ module Storehouse
         set_index(object, 'attempting_int', 0)
 
         object.store
-      
       end
 
       def delete(path)
@@ -123,6 +125,10 @@ module Storehouse
 
       def one_year_ago
         Time.now.to_i - 365*24*60*60
+      end
+
+      def riak_object?(object)
+        object.is_a?(::Riak::RObject)
       end
 
     end

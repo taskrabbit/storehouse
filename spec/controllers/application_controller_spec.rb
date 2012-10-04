@@ -16,8 +16,8 @@ describe ApplicationController do
     before do
 
       original_method = controller.method(:cache_page)
-      controller.should_receive(:cache_page).once do |content, path, gzip|
-        original_method.call(content, path, gzip)
+      controller.should_receive(:cache_page).once do |*args|
+        original_method.call(*args)
       end
 
     end

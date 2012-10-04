@@ -85,13 +85,12 @@ module Storehouse
 
       def with_timeout(type, default = 5)
 
-        Timeout::timeout(timeout_length(type) || default) do 
-          yield
+        rescue_and_report do
+          Timeout::timeout(timeout_length(type) || default) do 
+            yield
+          end
         end
 
-      rescue Timeout::Error => e
-        Storehouse.config.report_error(e)
-        nil  
       end
 
       def ttl(opts)
@@ -103,6 +102,13 @@ module Storehouse
         expiration = Time.now + expiration if expiration
         expiration ||= opts[:expires_at]
         expiration
+      end
+
+      def rescue_and_report
+        yield
+      rescue Exception => e # any error coming from the client will be consumed
+        Storehouse.config.report_error(e) unless e.message.to_s =~ /not found|not_found|404/
+        nil
       end
 
     end
