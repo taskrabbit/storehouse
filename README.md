@@ -6,7 +6,7 @@ Storehouse provides a cache layer that wraps Rails' page caching strategy. It pr
 
 ## Installation
 
-**Storehouse is compatible and tested in both Rails 2 (2.3.14) and 3 (3.2.6)**
+**Storehouse is compatible and tested on all minor versions of rails 3**
 
 Add this line to your application's Gemfile:
 
@@ -41,12 +41,6 @@ Create an initializer to configure your storehouse integration:
 
     end
 
-Include the middleware into your app:
-
-    # application.rb or environment.rb
-
-    config.middleware.use 'Storehouse::Middleware'
-
 Now you're ready to go.
 
 ## Advanced Configuration
@@ -70,6 +64,7 @@ The following cache store adapters are provided:
   -   Redis
   -   Riak
   -   S3
+  -   InMemory (great for tests)
 
 To create your own adapter inherit from `Storehouse::Adapter::Base` and implement the following methods:
     
