@@ -86,4 +86,32 @@ describe ApplicationController do
 
   end
 
+  context "in panic mode" do
+
+    before do
+      Storehouse.configure do
+        panicer true
+      end
+    end
+    
+    after do
+      `rm -r #{Rails.root.join('public', 'application')}` rescue nil
+    end
+
+    it 'should not expire the cache because we\'re in panic mode' do
+
+      get :show, :id => id
+      response.should be_success
+
+      Storehouse.read("/application/#{id}/show").should_not be_blank
+
+      File.file?(Rails.root.join('public', 'application', "#{id}", 'show.html')).should be_true
+
+      Storehouse.send(:data_store).should_receive(:delete).never
+
+      get :touch, :id => id
+    end
+
+  end
+
 end

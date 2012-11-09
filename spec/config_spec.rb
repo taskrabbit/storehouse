@@ -155,4 +155,23 @@ describe Storehouse::Config do
 
   end
 
+  it 'should determine panic mode correctly' do
+    
+    Storehouse.config.panic?.should be_false
+    
+    Storehouse.configure do
+      panicer true
+    end
+
+    Storehouse.config.panic?.should be_true
+
+    Storehouse.configure do
+      panicer lambda{|path| path == 'testing' }
+    end
+
+    Storehouse.config.panic?.should be_false
+    Storehouse.config.panic?('testing').should be_true
+
+  end
+
 end

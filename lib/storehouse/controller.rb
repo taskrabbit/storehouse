@@ -28,6 +28,8 @@ module Storehouse
 
     def expire_page(path)
 
+      return if Storehouse.config.panic?(path)
+
       instrument_page_cache :expire_page, path do
         Storehouse.delete(path)
       end unless Storehouse.config.disabled
@@ -43,7 +45,7 @@ module Storehouse
 
       use_cache = (options[:storehouse].nil? || options[:storehouse]) && Storehouse.config.consider_caching?(path)
 
-      if !use_cache || Storehouse.config.continue_writing_filesystem || Storehouse.config.distribute?(path)
+      if !use_cache || Storehouse.config.continue_writing_filesystem || Storehouse.config.distribute?(path) || Storehouse.config.panic?(path)
         super
       end
 

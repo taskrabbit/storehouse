@@ -63,6 +63,9 @@ module Storehouse
 
     # the thing that is provided with errors when something blows up
     config_setting :error_receiver
+
+    # the thing that tells storehouse we're in a panic mode
+    config_setting :panicer
     
 
     # these are lists that are evaluated to determine if storehouse should consider caching the supplied path
@@ -81,6 +84,11 @@ module Storehouse
     def report_error(e)
       self.error_receiver.try(:call, e)
       nil
+    end
+
+    def panic?(path = nil)
+      return self.panicer.call(path) if self.panicer.respond_to?(:call)
+      !!self.panicer
     end
 
 
