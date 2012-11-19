@@ -20,5 +20,5 @@ Gem::Specification.new do |gem|
   gem.add_dependency('rack')
   gem.add_dependency('rake')
 
-  gem.add_development_dependency('ruby-debug')
+  gem.add_development_dependency('ruby-debug') unless ENV['TRAVIS']
 end
