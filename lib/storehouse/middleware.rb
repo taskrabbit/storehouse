@@ -1,3 +1,6 @@
+require 'rack'
+require 'active_support/core_ext/hash/except'
+
 module Storehouse
   class Middleware
 
@@ -8,90 +11,106 @@ module Storehouse
 
     def call(env)
 
-      request = env
+      return strip_storehouse_headers(@app.call(env)) unless Storehouse.enabled?
 
-      expire_nonstop = false
-      path = request['REQUEST_URI']
-
-      if should_care_about_request?(request) && ::Storehouse.config.consider_caching?(path)
-      
-        expire_nonstop = true
-        content = ::Storehouse.read(path)
-
-        if content
-          write_to_filesystem!(content, path) if can_write_to_filesystem? && ::Storehouse.config.distribute?(path)
-          return [200, build_headers(path, content), content]
-        end
-
+      storehouse_response(env) do
+        @app.call(env)
       end
-
-      @app.call(request)
-
-      
-    ensure
-      ::Storehouse.expire_nonstop_attempt!(path) if expire_nonstop
-      ::Storehouse.teardown!
-    end
-
-    
+    end    
 
     protected
 
-    def should_care_about_request?(request)
-      get_request?(request) && void_of_query_string?(request) && ::Storehouse.config.utilize_middleware?(request)
-    end
+    def storehouse_response(env)
 
-    # maybe we can use a rack::request eventually.
-    # right now these are simple operations.
-    def get_request?(request)
-      request['REQUEST_METHOD'].to_s.downcase == 'get'
-    end
+      path = URI.parse(env['REQUEST_URI']).path
+      path = "#{path}.html" unless path =~ /\.[a-z0-9A-Z]+$/
 
-    def void_of_query_string?(request)
-      ::Storehouse.config.ignore_query_params     || 
-      request['QUERY_STRING'].to_s.length == 0   ||
-      !reheating?(request)
-    end
+      return yield if ignore?(path, env)
 
-    def reheating?(request)
-      param_to_look_for = ::Storehouse.config.reheat_parameter
-      reheating = param_to_look_for && !!(request['QUERY_STRING'] =~ /^#{param_to_look_for}([^&]+)?$/)
-      
-      # clear the query string so rails so the app won't think anything is abnormal
-      if reheating
-        request['QUERY_STRING'] = ''
-      end
-      reheating
-    end
+      response  = nil
+      store     = true
+      object    = Storehouse.read(path)
 
-    def build_headers(path, content)
-      {
-        'Content-Type' => format_from_path(path),
-        'Content-Length' => content.length.to_s,
-        'Cache-Control' => 'private, max-age=0, must-revalidate'
-      }.delete_if{|k,v| v.nil? }
-    end
-
-    # improve this.
-    def format_from_path(path)
-      case path.to_s.split('?').first.split('.')[1].to_s
-      when 'html', 'mobile', ''
-        'text/html'
-      when 'js', 'json'
-        'text/javascript'
-      when 'css'
-        'text/css'
+      if reheating?(env) || object.blank?
+        response = yield
+      elsif object.expired? && !render_expired?(env)
+        Storehouse.postpone(object) if Storehouse.postpone?
+        response = yield
       else
-        nil
+        response = object.rack_response
+        store = false
       end
-    end 
 
-    def write_to_filesystem!(content, path)
-      ActionController::Base.cache_page(content, path)
+      attempt_to_store(path, response) if store
+      attempt_to_distribute(path, response)
+
+      response
     end
 
-    def can_write_to_filesystem?
-      defined?(ActionController::Base) && ActionController::Base.respond_to?(:cache_page)
+
+    def attempt_to_store(path, response)
+
+      status, headers, content = response
+
+      return response unless status.to_s == '200'
+
+      if headers.delete('X-Storehouse').to_i > 0
+        expires_at = headers.delete('X-Storehouse-Expires-At')
+        content = Rack::Response.new(content).body.first unless content.is_a?(String)
+        Storehouse.write(path, status, headers, content, expires_at)
+      end
+
+      [status, headers, content]
+
+    end
+
+
+    def attempt_to_distribute(path, response)
+
+      status, headers, content = response
+
+      if headers['X-Storehouse-Distribute'].to_i > 0 || Storehouse.panic?
+        Storehouse.write_file(path, content)
+      end
+
+      [status, headers, content]
+    end
+
+
+    def strip_storehouse_headers(response)
+
+      status, headers, content = response
+
+      headers.except!('X-Storehouse', 'X-Storehouse-Expires-At', 'X-Storehouse-Distribute')
+
+      [status, headers, content]
+    end
+
+
+    def ignore?(path, env)
+      return true if path =~ /\/assets\//
+      return true if !Storehouse.ignore_params? && env['QUERY_STRING'].present? && !reheating?(env)
+      false
+    end
+
+    def render_expired?(env)
+      return false unless regex = ::Storehouse.serve_expired_content_to
+      useragent = env['User-Agent']
+      useragent && !!(useragent =~ /#{regex}/)
+    end
+
+    def reheating?(env)
+      exp = reheat_expression
+      exp && !!(env['QUERY_STRING'] =~ exp)
+    end
+
+    def reheat_expression
+      param = ::Storehouse.reheat_param
+      return nil unless param
+
+      prefix = Storehouse.ignore_params? ? nil : '^'
+      suffix = Storehouse.ignore_params? ? nil : '([^&]+)?$'
+      /#{prefix}#{param}#{suffix}/
     end
 
   end
