@@ -14,8 +14,11 @@ Gem::Specification.new do |gem|
   gem.name          = "storehouse"
   gem.require_paths = ["lib"]
   gem.version       = Storehouse::VERSION
+  
   gem.add_dependency('activesupport', '>=0')
   gem.add_dependency('json')
   gem.add_dependency('rack')
+  gem.add_dependency('rake')
+
   gem.add_development_dependency('ruby-debug')
 end
