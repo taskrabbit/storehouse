@@ -1,1 +1,1 @@
-rvm use 193@storehouse --create
+rvm use 1.9.3@storehouse --create
