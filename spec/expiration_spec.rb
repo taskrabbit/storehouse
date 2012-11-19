@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Storehouse expiration' do
 
   let(:mid){ Storehouse::Middleware.new(app) }
-  let(:app){ lambda{|req| [200, {'X-Storehouse' => '1'}, ['some other content']] }}
+  let(:app){ lambda{|request| [200, {'X-Storehouse' => '1'}, ['some other content']] }}
   let(:req){ {'REQUEST_URI' => '/path/to/content'} }
   let(:bot){ req.merge({'User-Agent' => 'GoogleBot 2.1'}) }
   let(:reheat){ req.merge({'QUERY_STRING' => 'reheat_cache=true'}) }

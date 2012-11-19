@@ -6,7 +6,7 @@ describe 'Storehouse Postponing' do
     gem_config(:postpone)
   end
 
-  let(:app){ lambda{ [200, {}, 'test'] } }
+  let(:app){ lambda{|req| [200, {}, 'test'] } }
   let(:middleware){ Storehouse::Middleware.new(app) }
   let(:env){ {'REQUEST_URI' => '/path/to/something'} }
 
@@ -26,7 +26,7 @@ describe 'Storehouse Postponing' do
 
   it 'should never postpone if we\'re told to render expired' do
     middleware.stub(:render_expired? => true)
-    object = stub(:blank? => false, :expired? => true, :rack_response => app.call)
+    object = stub(:blank? => false, :expired? => true, :rack_response => app.call({}))
     Storehouse.store.should_receive(:read).and_return(object)
     Storehouse.store.should_receive(:postpone).never
     middleware.call(env)

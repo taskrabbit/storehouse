@@ -16,7 +16,7 @@ describe "Storehouse Disabling" do
   end
 
   it 'should not invoke any middleware functionality when storehouse is disabled' do
-    app = lambda{ [200, {}, 'hey'] }
+    app = lambda{|req| [200, {}, 'hey'] }
     env = {}
     middleware = Storehouse::Middleware.new(app)
 
@@ -26,7 +26,7 @@ describe "Storehouse Disabling" do
   end
 
   it 'should remove storehouse headers even when it\'s disabled' do
-    app = lambda{ [200, {'X-Storehouse-Distribute' => '1'}, 'hey'] }
+    app = lambda{|req| [200, {'X-Storehouse-Distribute' => '1'}, 'hey'] }
     env = {}
     middleware = Storehouse::Middleware.new(app)
 
