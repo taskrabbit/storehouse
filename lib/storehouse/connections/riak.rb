@@ -63,7 +63,7 @@ module Storehouse
       end
 
       def clean!(namespace = nil)
-        chunked do |key|
+        chunked(namespace) do |key|
           object = read(key)
           if object.expired?
             delete(key)
@@ -74,7 +74,7 @@ module Storehouse
       end
 
       def clear!(namespace = nil)
-        chunked do |key|
+        chunked(namespace) do |key|
           delete(key)
         end
       end
@@ -82,7 +82,7 @@ module Storehouse
 
       protected
 
-      def chunked
+      def chunked(namespace = nil)
         t = Time.now.to_i - 60*24*60*60 # 2 months ago
         t0 = Time.now.to_i 
 
@@ -97,8 +97,10 @@ module Storehouse
 
           cnt = 0
           @bucket.get_index('created_at_int', t0.to_i...t1.to_i).each do |k|
-            yield k
-            cnt += 1
+            if !namespace || k =~ /^#{namespace}/
+              yield k
+              cnt += 1
+            end
           end
 
           t0 -= clearing_delta

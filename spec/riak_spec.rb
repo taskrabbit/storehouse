@@ -1,28 +1,30 @@
 require 'spec_helper'
 
-describe Storehouse::Connections::Redis do
+describe Storehouse::Connections::Riak do
 
   let(:store){ Storehouse.send(:store) }
-  let(:redis){ store.send(:connection_for).instance_variable_get('@redis') }
+  let(:riak){ store.send(:connection_for).instance_variable_get('@bucket') }
 
   before do 
-    gem_config(:simple, :namespace, :type => :redis)
-    pending unless redis_available?
+    gem_config(:simple, :namespace, :type => :riak)
+    pending unless riak_available?
   end
 
-  it 'should connect to redis' do
-    store.send(:connection_for, nil).should be_a(::Storehouse::Connections::Redis)
-    redis.get('anything').should be_nil
+  it 'should connect to riak' do
+    store.send(:connection_for).should be_a(::Storehouse::Connections::Riak)
+    lambda{
+      riak.get('anything')
+    }.should raise_error(/404/)
   end
 
-  it 'should write an object to redis and return it back' do
+  it 'should write an object to riak and return it back' do
     objecta = store.write('/some/path', 200, {'My Header' => 'Value'}, 'The actual content', Time.now.to_i + 10)
     objectb = store.read(objecta.path)
 
     objecta.to_h.should eql(objectb.to_h)
   end
 
-  it 'should expire the object, not the redis value' do
+  it 'should expire the object, not the riak value' do
     objecta = store.write('/some/path', 200, {'My Header' => 'Value'}, 'The actual content', Time.now.to_i + 10)
     store.expire('/some/path')
     objectb = store.read('/some/path')
@@ -41,18 +43,26 @@ describe Storehouse::Connections::Redis do
   end
 
   it 'should clear all objects' do
+
+    Riak.disable_list_keys_warnings = true
+
     store.clear!
+
+    sleep 3 # gotta let riak catch up
 
     [200, 201].each do |status|
       store.write("/b/some/path/#{status}", 200, {'My Header' => 'Value'}, 'The actual content')
     end
-    redis.keys('test:*').length.should eql(2)
+    
+    riak.keys.length.should eql(2)
     store.clear!
 
-    redis.keys('test:*').should be_empty
+    sleep 3
+
+    riak.keys.should be_empty
   end
 
-  def redis_available?
+  def riak_available?
     begin
       Storehouse.store.send(:connection_for).read('anything')
       true
