@@ -14,6 +14,7 @@ module Storehouse
   module Connections
     autoload :Memory,     'storehouse/connections/memory'
     autoload :Redis,      'storehouse/connections/redis'
+    autoload :Riak,       'storehouse/connections/riak'
   end
 
   class << self

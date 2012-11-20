@@ -124,6 +124,16 @@ RSpec.configure do |config|
     }
   end
 
+  def riak_config
+    {
+      'backend' => 'riak',
+      'connections' => {
+        :host => '127.0.0.1',
+        :http_port => 8098
+      }
+    }
+  end
+
 
   def memory_config
     {

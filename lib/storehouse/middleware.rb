@@ -83,7 +83,7 @@ module Storehouse
       status, headers, content = response
 
       if headers['X-Storehouse-Distribute'].to_i > 0 || (headers['X-Storehouse'].to_i > 0 && Storehouse.panic?)
-        Storehouse.write_file(path, content)
+        Storehouse.write_file(path, [*content].first)
       end
 
       [status, headers, content]

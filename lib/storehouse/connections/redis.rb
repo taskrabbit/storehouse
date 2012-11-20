@@ -18,7 +18,9 @@ module Storehouse
       end
 
       def delete(path)
+        object = read(path)
         @redis.del(path)
+        object
       end
 
       def expire(path)
