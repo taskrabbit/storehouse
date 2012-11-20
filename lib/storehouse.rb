@@ -34,8 +34,8 @@ module Storehouse
 
     def spec
       @spec ||= begin
-        full_config = YAML.load_file(config_path)
-        full_config[app_env]
+        full_config = YAML.load_file(config_path) || {}
+        full_config[app_env] || {}
       end
     end
 
