@@ -11,6 +11,7 @@ module Storehouse
       options.each do |k,v|
         self.send("#{k}=", v) if self.respond_to?("#{k}=")
       end
+      self.expires_at = nil if self.expires_at.to_i == 0
       self.created_at ||= Time.now.to_i
     end
 

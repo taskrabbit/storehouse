@@ -61,7 +61,8 @@ describe Storehouse::Middleware do
 
   it 'should distribute and keep storehouse distribution header' do
     Storehouse.should_receive(:write_file).with('/path/for/something.html', 'test response').once
-    status, headers, content = middleware.call(distribute_request)
-    headers.has_key?('X-Storehouse-Distribute').should be_true
+    middleware.call(distribute_request)
+    object = Storehouse.read('/path/for/something.html')
+    object.headers.has_key?('X-Storehouse-Distribute').should be_true
   end
 end

@@ -1,0 +1,9 @@
+test:
+  enabled: true
+  backend: memory
+  namespace: dev
+  postpone: false
+  panic_path: 'public/tvmode.txt'
+  ignore_params: false
+  serve_expired_content_to: Bot
+  reheat_param: reheat_cache

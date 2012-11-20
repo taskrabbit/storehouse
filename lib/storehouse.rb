@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'yaml'
 require 'active_support/core_ext/object/blank'
 require 'storehouse/railtie' if defined?(Rails)
 
@@ -17,7 +18,7 @@ module Storehouse
 
   class << self
 
-    %w(read write delete expire postpone clear!).each do |meth|
+    %w(read write delete expire postpone clear! clean!).each do |meth|
       class_eval <<-EV
         def #{meth}(*args)
           return nil unless self.enabled?
@@ -63,7 +64,7 @@ module Storehouse
     end
 
     def ignore_params?
-      !!spec['ignore_params']
+      !!spec['ignore_params ']
     end
 
     def reheat_param
@@ -72,6 +73,14 @@ module Storehouse
 
     def serve_expired_content_to
       spec['serve_expired_content_to']
+    end
+
+    def panic_path
+      File.join(app_root, spec['panic_path'])
+    end
+
+    def cache_path(file_path = '')
+      File.join(app_cache_path, file_path)
     end
 
 
@@ -114,14 +123,6 @@ module Storehouse
 
     def config_path
       File.join(app_root, 'config', 'storehouse.yml')
-    end
-
-    def panic_path
-      File.join(app_root, spec['panic_path'])
-    end
-
-    def cache_path(file_path)
-      File.join(app_cache_path, file_path)
     end
 
   end

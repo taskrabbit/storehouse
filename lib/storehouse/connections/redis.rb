@@ -25,6 +25,18 @@ module Storehouse
         @redis.hset(path, 'expires_at', Time.now.to_i.to_s)
       end
 
+      def clean!(namespace = nil)
+        now = Time.now.to_i
+        @redis.keys("#{namespace}*").each do |key|
+          vals = read(key)
+          if vals['expires_at'].to_i < now
+            delete(key)
+          else
+            expire(key)
+          end
+        end
+      end
+
       def clear!(namespace = nil)
         @redis.keys("#{namespace}*").each do |key|
           delete(key)

@@ -27,6 +27,7 @@ module Storehouse
       def clear!(namespace = nil)
         @data = {}
       end
+      alias_method :clean!, :clear!
 
     end
   end

@@ -73,6 +73,8 @@ describe 'Storehouse expiration' do
       request = reheat
       request['QUERY_STRING'] << '&someother=param'
 
+      response_val = app.call({})
+      app.should_receive(:call).with({"REQUEST_URI"=>"/path/to/content", "QUERY_STRING"=>"someother=param"}).and_return(response_val)
       response = mid.call(request)
       response[2].should eql(['some other content'])
     end

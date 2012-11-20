@@ -77,6 +77,13 @@ module Storehouse
       end
     end
 
+    def clean!
+      execute(:clean, 60) do
+        prefix = storage_path('')
+        connection_for.clean!(prefix)
+      end
+    end
+
 
     protected
 
