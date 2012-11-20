@@ -7,12 +7,17 @@
 
 
 require 'storehouse'
-require 'delorean'
 require 'active_support/core_ext/hash/reverse_merge'
 require 'active_support/core_ext/array/extract_options'
 
 begin
   require 'ruby-debug'
+rescue LoadError => e
+  nil
+end
+
+begin
+  require 'debugger'
 rescue LoadError => e
   nil
 end

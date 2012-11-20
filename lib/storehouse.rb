@@ -64,7 +64,7 @@ module Storehouse
     end
 
     def ignore_params?
-      !!spec['ignore_params ']
+      !!spec['ignore_params']
     end
 
     def reheat_param
