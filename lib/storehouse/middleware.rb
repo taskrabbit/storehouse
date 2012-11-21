@@ -24,7 +24,7 @@ module Storehouse
 
     def storehouse_response(env)
 
-      path = URI.parse(env['REQUEST_URI']).path
+      path = URI.parse(env['REQUEST_URI'] || env['PATH_INFO']).path
       path = "#{path}.html" unless path =~ /\.[a-z0-9A-Z]+$/
 
       return yield if ignore?(path, env)
