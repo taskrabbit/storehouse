@@ -1,5 +1,5 @@
 module Storehouse
   class Railtie < Rails::Railtie
-    config.app_middleware.insert 0, 'Storehouse::Middleware'
+    config.app_middleware.use 'Storehouse::Middleware'
   end
 end
