@@ -69,8 +69,7 @@ module Storehouse
 
         observe_panic_mode(headers)
 
-        content = Rack::Response.new(content).body.first unless content.is_a?(String)
-        Storehouse.write(path, status, headers.except(*STOREHOUSE_HEADERS), content, expiration)
+        Storehouse.write(path, status, headers.except(*STOREHOUSE_HEADERS), string_content(content), expiration)
       end
 
       [status, headers, content]
@@ -83,7 +82,7 @@ module Storehouse
       status, headers, content = response
 
       if headers['X-Storehouse-Distribute'].to_i > 0 || (headers['X-Storehouse'].to_i > 0 && Storehouse.panic?)
-        Storehouse.write_file(path, [*content].first)
+        Storehouse.write_file(path, string_content(content))
       end
 
       [status, headers, content]
@@ -134,6 +133,11 @@ module Storehouse
 
     def observe_panic_mode(headers)
       headers['X-Storehouse'] = '1' if Storehouse.panic?
+    end
+
+    def string_content(content)
+      content = Rack::Response.new(content).body.first unless content.is_a?(String)
+      content
     end
 
   end
