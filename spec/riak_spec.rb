@@ -50,16 +50,18 @@ describe Storehouse::Connections::Riak do
 
     sleep 3 # gotta let riak catch up
 
+    original_length = riak.keys.length
+
     [200, 201].each do |status|
       store.write("/b/some/path/#{status}", 200, {'My Header' => 'Value'}, 'The actual content')
     end
     
-    riak.keys.length.should eql(2)
+    riak.keys.length.should eql(original_length + 2)
     store.clear!
 
     sleep 3
 
-    riak.keys.should be_empty
+    riak.keys.length.should eql(original_length)
   end
 
   def riak_available?

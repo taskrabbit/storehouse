@@ -81,7 +81,14 @@ module Storehouse
     end
 
     def cache_path(file_path = '')
+      file_path = endpoint_path(file_path)
       File.join(app_cache_path, file_path)
+    end
+
+    def endpoint_path(path)
+      path = "#{path}index.html" if path =~ /\/$/
+      path = "#{path}.html"  unless path =~ /\.[a-zA-Z0-9]+$/
+      path
     end
 
 

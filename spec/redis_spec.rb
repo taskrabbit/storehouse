@@ -48,7 +48,7 @@ describe Storehouse::Connections::Redis do
     end
     redis.keys('test:*').length.should eql(2)
     store.clear!
-
+    
     redis.keys('test:*').should be_empty
   end
 

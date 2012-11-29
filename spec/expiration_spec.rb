@@ -12,7 +12,7 @@ describe 'Storehouse expiration' do
 
     it 'should serve content that\'s not expired' do
       obj = Storehouse.write('/path/to/content.html', 200, {}, 'test content')
-      Storehouse.stub(:read).with('/path/to/content.html').and_return(obj)
+      Storehouse.stub(:read).with('/path/to/content').and_return(obj)
 
       response = mid.call(req)
       response[2].should eql(['test content'])
@@ -20,7 +20,7 @@ describe 'Storehouse expiration' do
 
     it 'should not serve expired content' do
       obj = Storehouse.write('/path/to/content.html', 200, {}, 'test content')
-      Storehouse.stub(:read).with('/path/to/content.html').and_return(obj)
+      Storehouse.stub(:read).with('/path/to/content').and_return(obj)
       obj.stub(:expired?).and_return(true)
 
       response = mid.call(req)
@@ -31,7 +31,7 @@ describe 'Storehouse expiration' do
       gem_config(:bot)
 
       obj = Storehouse.write('/path/to/content.html', 200, {}, 'test content')
-      Storehouse.stub(:read).with('/path/to/content.html').and_return(obj)
+      Storehouse.stub(:read).with('/path/to/content').and_return(obj)
       obj.stub(:expired?).and_return(true)
 
       response = mid.call(bot)
@@ -44,8 +44,8 @@ describe 'Storehouse expiration' do
     before do
       gem_config(:reheat)
 
-      obj = Storehouse.write('/path/to/content.html', 200, {}, 'test content')
-      Storehouse.stub(:read).with('/path/to/content.html').and_return(obj)
+      obj = Storehouse.write('/path/to/content', 200, {}, 'test content')
+      Storehouse.stub(:read).with('/path/to/content').and_return(obj)
       obj.should_not be_expired
     end
 

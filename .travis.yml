@@ -11,3 +11,4 @@ gemfile:
 
 services:
   - redis-server
+  - riak

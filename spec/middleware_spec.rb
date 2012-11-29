@@ -40,7 +40,7 @@ describe Storehouse::Middleware do
       :content => 'cached content'
     )
 
-    Storehouse.should_receive(:read).with('/path/for/something.html').once.and_return(object)
+    Storehouse.should_receive(:read).with('/path/for/something').once.and_return(object)
     app.should_receive(:call).never
 
     result = middleware.call(normal_request)
@@ -49,18 +49,18 @@ describe Storehouse::Middleware do
   end
 
   it 'should cache the response when told to' do
-    Storehouse.should_receive(:write).with('/path/for/something.html', 200, {}, 'test response', nil)
+    Storehouse.should_receive(:write).with('/path/for/something', 200, {}, 'test response', nil)
     middleware.call(cache_request)
   end
 
   it 'should cache the response with an expiration and drop storehouse headers' do
-    Storehouse.should_receive(:write).with('/path/for/something.html', 200, {}, 'test response', '123456')
+    Storehouse.should_receive(:write).with('/path/for/something', 200, {}, 'test response', '123456')
     status, headers, content = middleware.call(expire_request)
     headers.keys.should be_empty
   end
 
   it 'should distribute and keep storehouse distribution header' do
-    Storehouse.should_receive(:write_file).with('/path/for/something.html', 'test response').once
+    Storehouse.should_receive(:write_file).with('/path/for/something', 'test response').once
     middleware.call(distribute_request)
     object = Storehouse.read('/path/for/something.html')
     object.headers.has_key?('X-Storehouse-Distribute').should be_true

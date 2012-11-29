@@ -72,14 +72,14 @@ module Storehouse
 
     def clear!
       execute(:clear, 60) do
-        prefix = storage_path('')
+        prefix = namespaced_path('')
         connection_for.clear!(prefix)
       end
     end
 
     def clean!
       execute(:clean, 60) do
-        prefix = storage_path('')
+        prefix = namespaced_path('')
         connection_for.clean!(prefix)
       end
     end
@@ -106,6 +106,10 @@ module Storehouse
     end
 
     def storage_path(path)
+      Storehouse.endpoint_path(namespaced_path(path))
+    end
+
+    def namespaced_path(path)
       [Storehouse.namespace, path].compact.join(':')
     end
   end
