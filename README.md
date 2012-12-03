@@ -2,96 +2,93 @@
 
 [![Build Status](https://secure.travis-ci.org/taskrabbit/storehouse.png)](http://travis-ci.org/taskrabbit/storehouse)
 
-Storehouse provides a cache layer that wraps Rails' page caching strategy. It provides a middleware that returns content from a centralized cache store and writes files to your local machine on-demand, allowing distribution to multiple servers. Cache stores can be easily defined by using or creating an adapter.
+
+Storehouse provides a rack middleware which provides access to a centralized cache store. The cache store is up to you, we've used Redis and Riak in production environments without issue. Storehouse aims to be a lightweight and simple middleware which relies solely on simple configuration files and is completely unaware of app frameworks.
+
 
 ## Installation
 
-**Storehouse is compatible and tested on all minor versions of rails 3**
+Add storehouse to your Gemfile:
 
-Add this line to your application's Gemfile:
+    gem 'storehouse', :git => 'git@github.com:taskrabbit/storehouse.git', :tag => 'v0.1.0'
 
-    gem 'storehouse'
 
-And then execute:
+If you're running a railtie enabled version of rails, you're all set. For all other rack apps you'll have to insert the Storehouse::Middleware:
 
-    $ bundle
+    config.middleware.add 'Storehouse::Middleware'
 
-Or install it yourself as:
+## Invoking the Middleware
 
-    $ gem install storehouse
+Getting Storehouse to cache content is as simple as adding a header (or two). To make Storehouse push the rendered content into the backend, add a `X-Storehouse` header with a string value of `'1'`:
 
-## Usage
+    response.headers['X-Storehouse'] = '1' if cache_page?
 
-Create an initializer to configure your storehouse integration:
+Optionally, you can pass an expiration time for the content: 
 
-    # config/intializers/storehouse.rb
-    Storehouse.configure do
-      adapter 'Riak'                                            # the adapter to use
-      adapter_options {:bucket => '_page_cached_content'}       # pass options that are provided to the adapter instance
-      
-      continue_writing_filesystem true                          # should storehouse allow rails to continue writing to the filesystem?
-      ignore_query_params false                                 # should storehouse ignore query params when choosing a cached object?
+    response.headers['X-Storehouse-Expires-At'] = 10.minutes.from_now.to_i.to_s
 
-      distribute '/tos', '/privacy', /^\/pages\//               # patterns or paths to match against when determining if content should be distributed
+You can also tell Storehouse to distribute the content:
 
-      except '/tos'                                             # append the provided value(s) to the 'except' array
-      ignore '/about'                                           # alias for except
+    response.headers['X-Storehouse-Distribute'] = '1'
 
-      only '/tos', '/privacy'                                   # only cache these pages or patterns in storehouse
+These headers will never reach your end user as the are always stripped out.
 
-    end
 
-Now you're ready to go.
+## Distribution
 
-## Advanced Configuration
+Distribution is a great way to share cached resources on a multi-box setup. If you would like Storehouse to distribute the rendered page across all boxes, simply add the `X-Storehouse-Distribute` header. This will do three things: 1) Add the content to the backend 2) Mark the content as distributable and 3) Lay the file on the server handling the current request. This means only one server does the work, but your entire system reaps the benefits.
 
-For more flexibility you can also provide Storehouse's configuration with an array containing a path and a function or a hash containing paths as the keys and functions as the values. The function will be given the path at runtime and should return true or false.
+## Configuration
 
-    # config/initializers/storehouse.rb
-    Storehouse.configure do |c|
-      only '/tos', {/\/pages\// => lambda{|path| path.length == 12 }}
-      except '/privacy', [/\/pages\//, lambda{|path| path.ends_with?('t') }]
-    end
+Storehouse uses a config file `storehouse.yml` to set itself up. The core of the config file is the following:
 
-Pointless examples, but the ability to configure is there. The `function` just needs to respond to `call()` so you can use whatever you want there.
+    development:
+      enabled: true
+      backend: redis
+      connections:
+        host: 127.0.0.1
+        port: 6379
 
-## Adapters
+With this simple config you'll be up and running. The rest of the options are shown below. Please read the appropriate section for detailed usage:
 
-The following cache store adapters are provided:
+    development:
+      enabled: true                          # include this line to enable storehouse
+      backend: redis                         # choose the backend your app will use
+      namespace: myappprod                   # the namespace which all keys should be prefixed by
+      connections:                           # the connection information passed to the backend
+        host: 10.0.0.1
+        port: 6380
 
-  -   Memcache
-  -   Dalli
-  -   Redis
-  -   Riak
-  -   S3
-  -   InMemory (great for tests)
+      reheat_param: reheat_cache             # the param to pass to reheat the cache manually
+      postpone: false                        # when encountering an expired page, defer the expiration for other users
+      ignore_params: false                   # serve cached content to requests with query strings
+      serve_expired_content_to: Bot          # the user agent matcher for serving expired content
+      panic_path: 'public/panic.txt'         # the relative path (from project root) for a panic file
 
-To create your own adapter inherit from `Storehouse::Adapter::Base` and implement the following methods:
-    
-  - read(path)
-  - write(path, content)
-  - delete(path)
-  - clear!
 
-## Distributed Cache
+### namespace
 
-When you're quickly developing an application you don't always want to deal with centralizing your cached content, which makes Storehouse a viable solution. That said, it does require the Rack stack to be invoked to access the centralized cache store which is obviously not as fast as, say, nginx. For this reason Storehouse allows on-demand distribution. You must opt into this solution since expiration would have to be done on each server. Generally, this is a solution that works well for truly static content that's expired on deploy. Let's look at an example:
+Storehouse provides a utility to prefix all keys entering your backend with a value provided by the config. This is especially useful when dealing with multiple environments, multiple apps sharing the same backend resource, etc. Provide a string via the `namespace` configuration and you're good to go.
 
-If I have 2 servers, **A** and **B**. A request comes into **A** which looks like:
+### reheat_param
 
-    GET [A]/terms-of-service
+It's often nice to see a cached page get rewritten on-demand. For this reason Storehouse allows a `reheat_param` to be configured. If this value is set and a request is received with **only** the reheat_param, the cache will be ignored and potentially rewritten. Storehouse strips off the rewrite param before passing control to the app so make sure your reheat param is very unique.
 
-Normally, Rails would drop a file in your cache directory on server **A**. If server **B** receives the same request, Rails must do the same on that server, completely ignorant of server **A**'s content.
+### postpone
 
-With Storehouse enabled and `/terms-of-service` in the config's distribution array, requesting:
+Postponing is a technique Storehouse uses to keep your app from undergoing an avalanche of requests for the same expired resource. If postponing is set to true and an expired resource is found, Storehouse will push back the resources expiration but allow the current request to continue through to the app server. In this case, any other request asking for the same resource will be given back the expired content rather than attempting to rewrite the cache. Before enabling this feature think about the use cases in your app. Are you ok with users seeing expired content while another request is handled?
 
-    GET [B]/terms-of-service
+### ignore_params
 
-would request `/terms-of-service` from the Storehouse cache store, retrieve the cached content, and lay down a new file on server **B**. Now, when `/terms-of-service` is requested on either server the content on the filesystem will be served, completely bypassing the application stack.
+If this is set to `true`, Storehouse will serve cached content even if params are passed. This is especially useful for utm-like params or params which are handled in a previous middleware and essentially ignored in your app.
 
-## Clearing the Cache
+### serve_expired_content_to
 
-Many times when you deploy new code you want to clear your cache. To do so in Storehouse you'll want to clear the files dropped on the server (if any) then call `Storehouse.clear!`. Each adapter makes sure that all the existing keys in the cache namespace are cleared.
+Many times you're ok serving expired content to certain user agents. Bot's are a perfect example of this. You put a lot of effort into building a cache and just because it's expired doesn't mean it's not valuable to Bot's. The value of this setting is evaluated as a regular expression and compared to the User-Agent header on the request. Use with caution.
+
+### panic_path
+
+Storehouse provides an especially useful tool which allows you to switch your site into a "panic" mode. Panic mode is for when you're experiencing massive load due to a traffic spike. Serving files from disk is always going to be more efficient so Storehouse will attempt to make use of that. This **is** a destructive operation in that any content coming from your backend or from your app with the `X-Storehouse` header will be written to disk. It will also render expired content read from the cache instead of passing control to your app. [More production implementation details coming soon]
 
 ## Contributing
 

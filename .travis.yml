@@ -7,9 +7,8 @@ rvm:
   - jruby
 
 gemfile:
-  - gemfiles/rails30.gemfile
-  - gemfiles/rails31.gemfile
-  - gemfiles/rails32.gemfile
+  - Gemfile
 
 services:
+  - redis-server
   - riak

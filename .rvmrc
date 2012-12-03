@@ -1,1 +1,1 @@
-rvm use ree@storehouse --create
+rvm use 1.9.3-p194@storehouse --create

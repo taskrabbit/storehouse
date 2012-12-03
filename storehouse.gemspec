@@ -14,5 +14,17 @@ Gem::Specification.new do |gem|
   gem.name          = "storehouse"
   gem.require_paths = ["lib"]
   gem.version       = Storehouse::VERSION
-  gem.add_dependency('rails', '>= 3.0')
+  
+  gem.add_dependency('activesupport', '>=0')
+  gem.add_dependency('json')
+  gem.add_dependency('rack')
+  gem.add_dependency('rake')
+
+  unless ENV['TRAVIS']
+    if ENV['RUBY_VERSION'] =~ /1\.9/
+      gem.add_development_dependency('debugger')
+    else
+      gem.add_development_dependency('ruby-debug')
+    end
+  end
 end
