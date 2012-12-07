@@ -8,7 +8,7 @@ describe 'Storehouse Postponing' do
 
   let(:app){ lambda{|req| [200, {}, 'test'] } }
   let(:middleware){ Storehouse::Middleware.new(app) }
-  let(:env){ {'REQUEST_URI' => '/path/to/something'} }
+  let(:env){ {'PATH_INFO' => '/path/to/something'} }
 
   it 'should not attempt to postpone an expired object unecessarily' do
     Storehouse.should_receive(:postpone).never

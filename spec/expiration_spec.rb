@@ -4,7 +4,7 @@ describe 'Storehouse expiration' do
 
   let(:mid){ Storehouse::Middleware.new(app) }
   let(:app){ lambda{|request| [200, {'X-Storehouse' => '1'}, ['some other content']] }}
-  let(:req){ {'REQUEST_URI' => '/path/to/content'} }
+  let(:req){ {'PATH_INFO' => '/path/to/content'} }
   let(:bot){ req.merge({'User-Agent' => 'GoogleBot 2.1'}) }
   let(:reheat){ req.merge({'QUERY_STRING' => 'reheat_cache=true'}) }
 
@@ -74,7 +74,7 @@ describe 'Storehouse expiration' do
       request['QUERY_STRING'] << '&someother=param'
 
       response_val = app.call({})
-      app.should_receive(:call).with({"REQUEST_URI"=>"/path/to/content", "QUERY_STRING"=>"someother=param"}).and_return(response_val)
+      app.should_receive(:call).with({"PATH_INFO"=>"/path/to/content", "QUERY_STRING"=>"someother=param"}).and_return(response_val)
       response = mid.call(request)
       response[2].should eql(['some other content'])
     end

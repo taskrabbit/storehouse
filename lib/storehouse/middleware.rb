@@ -1,4 +1,5 @@
 require 'rack'
+require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/hash/except'
 
 module Storehouse
@@ -24,7 +25,10 @@ module Storehouse
 
     def storehouse_response(env)
 
-      path = URI.parse(env['REQUEST_URI'] || env['PATH_INFO']).path
+      path_string   = env['PATH_INFO']
+      path_string ||= env['REQUEST_URI']
+
+      path = URI.parse(path_string).path rescue nil
 
       return yield if ignore?(path, env)
 
@@ -103,6 +107,7 @@ module Storehouse
 
 
     def ignore?(path, env)
+      return true if path.blank?
       return true unless ['', 'get'].include?(env['REQUEST_METHOD'].to_s.downcase)
       return true if path =~ /\/assets\//
       return true if !Storehouse.ignore_params? && env['QUERY_STRING'].present? && !reheating?(env)

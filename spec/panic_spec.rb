@@ -21,7 +21,7 @@ describe 'Storehouse panic' do
   it 'should not write files when panic mode is on but request does not provide storehouse headers' do
     gem_config(:panic)
     Storehouse.should_receive(:write_file).never
-    mid.call({'REQUEST_URI' => '/path/to/something'})
+    mid.call({'PATH_INFO' => '/path/to/something'})
   end
 
 end

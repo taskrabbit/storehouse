@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Storehouse::Middleware do
 
-  let(:normal_request){ {'REQUEST_URI' => '/path/for/something', 'response' => 'normal_response'} }
+  let(:normal_request){ {'PATH_INFO' => '/path/for/something', 'response' => 'normal_response'} }
   let(:normal_response){ [200, {}, 'test response'] }
 
   let(:cache_request){ normal_request.merge('response' => 'cache_response') }
