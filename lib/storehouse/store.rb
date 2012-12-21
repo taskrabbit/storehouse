@@ -54,12 +54,10 @@ module Storehouse
     def expire(path)
       object = read(path)
       
-      return if object.blank?
+      return object if object.blank? || object.expired?
 
-      unless object.expired?
-        object.expires_at = Time.now.to_i
-        write_object(path, object)
-      end
+      object.expires_at = Time.now.to_i
+      write_object(path, object)
     end
 
     def postpone(object)
@@ -74,6 +72,7 @@ module Storehouse
       execute(:clear, 60) do
         prefix = namespaced_path('')
         connection_for.clear!(prefix)
+        true
       end
     end
 
@@ -81,6 +80,7 @@ module Storehouse
       execute(:clean, 60) do
         prefix = namespaced_path('')
         connection_for.clean!(prefix)
+        true
       end
     end
 

@@ -114,6 +114,15 @@ RSpec.configure do |config|
     })
   end
 
+  def timeout_config
+    simple_config.merge!({
+      'timeoutes' => {
+        'read' => 0.2,
+        'write' => 0.2
+      }
+    })
+  end
+
   def redis_config
     {
       'backend' => 'redis',
@@ -133,7 +142,6 @@ RSpec.configure do |config|
       }
     }
   end
-
 
   def memory_config
     {
