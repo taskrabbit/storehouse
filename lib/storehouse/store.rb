@@ -1,5 +1,7 @@
 require 'active_support/core_ext/object/try'
 require 'active_support/core_ext/string/inflections'
+require 'active_support/core_ext/hash/keys'
+
 require 'timeout'
 
 module Storehouse
@@ -12,7 +14,7 @@ module Storehouse
 
     def initialize(spec)
       @spec = spec || {}
-      @timeouts = @spec['timeouts'] || {}
+      @timeouts = (@spec['timeouts'] || {}).stringify_keys
     end
 
 
@@ -88,7 +90,7 @@ module Storehouse
     protected
 
     def execute(kind, default_timeout = 5)
-      timeout = @timeouts[kind] || default_timeout
+      timeout = @timeouts[kind.to_s] || default_timeout
 
       begin 
         Timeout::timeout(timeout) do
