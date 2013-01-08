@@ -41,7 +41,7 @@ module Storehouse
 
       def clear!(namespace = nil)
         @redis.keys("#{namespace}*").each do |key|
-          delete(key)
+          @redis.del(key)
         end
       end
 

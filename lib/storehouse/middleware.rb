@@ -36,7 +36,12 @@ module Storehouse
       store     = true
       object    = Storehouse.read(path)
 
-      if reheating?(env)
+      # failure occurred, don't attempt to store because 
+      # we don't want to continue hitting a broken store
+      if object.nil?
+        response = yield
+        store = false
+      elsif reheating?(env)
         strip_reheat_params(env)
         response = yield
       elsif object.blank?

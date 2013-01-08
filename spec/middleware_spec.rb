@@ -65,4 +65,11 @@ describe Storehouse::Middleware do
     object = Storehouse.read('/path/for/something.html')
     object.headers.has_key?('X-Storehouse-Distribute').should be_true
   end
+
+  it 'should not attempt to write to the store if the retrieval was a failure' do
+    Storehouse.should_receive(:read).with('/path/for/something').and_return(nil)
+    middleware.should_receive(:attempt_to_store).never
+    Storehouse.should_receive(:write_file).once
+    middleware.call(distribute_request)
+  end
 end
