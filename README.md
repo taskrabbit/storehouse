@@ -10,7 +10,7 @@ Storehouse provides a rack middleware which provides access to a centralized cac
 
 Add storehouse to your Gemfile:
 
-    gem 'storehouse', :git => 'git@github.com:taskrabbit/storehouse.git', :tag => 'v0.1.2'
+    gem 'storehouse', :git => 'git@github.com:taskrabbit/storehouse.git', :tag => 'v0.1.3'
 
 
 If you're running a railtie enabled version of rails, you're all set. For all other rack apps you'll have to insert the Storehouse::Middleware:
