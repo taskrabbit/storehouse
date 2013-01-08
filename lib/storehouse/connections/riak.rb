@@ -1,4 +1,5 @@
 require 'riak'
+require 'cgi'
 
 module Storehouse
   module Connections
@@ -10,7 +11,9 @@ module Storehouse
         @bucket         = ::Riak::Client.new(@spec).bucket(@bucket_name)
       end
 
-      def read(path)
+      def read(path, skip_escape = false)
+        path = storage_path(path, skip_escape)
+
         object = begin
           @bucket.get(path)
         rescue Exception => e
@@ -32,8 +35,8 @@ module Storehouse
         data
       end
 
-      def write(path, hash)
-          
+      def write(path, hash, skip_escape = false)
+        path = storage_path(path, skip_escape)
         object = @bucket.get_or_new(path)
 
         return nil unless riak_object?(object)
@@ -50,32 +53,34 @@ module Storehouse
         object.store
       end
 
-      def delete(path)
-        hash = read(path)
+      def delete(path, skip_escape = false)
+        path = storage_path(path, skip_escape)
+        hash = read(path, true)
         @bucket.delete(path)
         hash
       end
 
-      def expire(path)
-        hash = read(path)
+      def expire(path, skip_escape = false)
+        path = storage_path(path, skip_escape)
+        hash = read(path, true)
         hash['expires_at'] = Time.now.to_i
-        write(path, hash)
+        write(path, hash, true)
       end
 
       def clean!(namespace = nil)
         chunked(namespace) do |key|
           object = read(key)
           if object.expired?
-            delete(key)
+            delete(key, true)
           else
-            expire(key)
+            expire(key, true)
           end
         end
       end
 
       def clear!(namespace = nil)
         chunked(namespace) do |key|
-          delete(key)
+          delete(key, true)
         end
       end
 
@@ -83,6 +88,9 @@ module Storehouse
       protected
 
       def chunked(namespace = nil)
+
+        namespace = storage_path(namespace)
+
         t = Time.now.to_i - 60*24*60*60 # 2 months ago
         t0 = Time.now.to_i 
 
@@ -122,6 +130,11 @@ module Storehouse
         object.is_a?(::Riak::RObject)
       end
 
+      def storage_path(path, skip_escape = false)
+        return nil if path.nil?
+        return path if skip_escape
+        CGI.escape(path)
+      end
 
     end
   end

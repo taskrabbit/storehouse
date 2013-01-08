@@ -17,6 +17,16 @@ describe Storehouse::Connections::Riak do
     }.should raise_error(/404/)
   end
 
+  it 'should encode all paths' do
+    riak.should_receive(:get).with("test%3A%2Fsome%2Fpath.html").once.and_return(nil)
+    store.read('/some/path')
+  end
+
+  it 'should not double encode paths' do
+    riak.should_receive(:get).with("test%3A%2Fsome%2Fpath.html").once.and_return(nil)
+    store.delete('/some/path')
+  end
+
   it 'should write an object to riak and return it back' do
     objecta = store.write('/some/path', 200, {'My Header' => 'Value'}, 'The actual content', Time.now.to_i + 10)
     objectb = store.read(objecta.path)
@@ -33,7 +43,7 @@ describe Storehouse::Connections::Riak do
     objecta.expires_at.to_i.should_not eql(objectb.expires_at.to_i)
   end
 
-  it 'should delete an object out of redis' do
+  it 'should delete an object out of riak' do
     objecta = store.write('/some/path', 200, {'My Header' => 'Value'}, 'The actual content', Time.now.to_i + 10)
     objectb = store.read('/some/path')
     objectb.should_not be_blank
