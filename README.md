@@ -90,6 +90,10 @@ Many times you're ok serving expired content to certain user agents. Bot's are a
 
 Storehouse provides an especially useful tool which allows you to switch your site into a "panic" mode. Panic mode is for when you're experiencing massive load due to a traffic spike. Serving files from disk is always going to be more efficient so Storehouse will attempt to make use of that. This **is** a destructive operation in that any content coming from your backend or from your app with the `X-Storehouse` header will be written to disk. It will also render expired content read from the cache instead of passing control to your app. [More production implementation details coming soon]
 
+### subdomains / subdomain
+
+If you need to restrict caching to certain subdomains, provide them in the configuration. All other subdomains will be ignored.
+
 ## Contributing
 
 1. Fork it

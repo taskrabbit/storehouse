@@ -114,9 +114,16 @@ module Storehouse
     def ignore?(path, env)
       return true if path.blank?
       return true unless ['', 'get'].include?(env['REQUEST_METHOD'].to_s.downcase)
+      return true if !valid_subdomain?(env)
       return true if path =~ /\/assets\//
       return true if !Storehouse.ignore_params? && env['QUERY_STRING'].present? && !reheating?(env)
       false
+    end
+
+    def valid_subdomain?(env)
+      return true if Storehouse.subdomains.length == 0
+      regex = /(^|\.)(#{Storehouse.subdomains.join('|')})\./
+      !(env['HTTP_HOST'] =~ regex)
     end
 
     def render_expired?(env)

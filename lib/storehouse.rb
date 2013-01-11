@@ -64,6 +64,14 @@ module Storehouse
       File.file?(panic_path)
     end
 
+    def subdomains
+      spec['subdomains'] || [subdomain].compact
+    end
+
+    def subdomain
+      spec['subdomain']
+    end
+
     def ignore_params?
       !!spec['ignore_params']
     end

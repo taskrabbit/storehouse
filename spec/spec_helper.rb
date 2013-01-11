@@ -149,4 +149,10 @@ RSpec.configure do |config|
       'connections' => {}
     }
   end
+
+  def subdomain_config
+    simple_config.merge!({
+      'subdomains' => %w(a b c)
+    })
+  end
 end

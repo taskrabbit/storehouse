@@ -22,6 +22,9 @@ describe Storehouse::Middleware do
     c
   }
 
+  let(:invalid_subdomain_request){ normal_request.merge('HTTP_HOST' => 'a.test.com') }
+  let(:valid_subdomain_request){ normal_request.merge('HTTP_HOST' => 'www.test.com') }
+
   let(:app){ lambda{|req| send(req['response']) } }
   let(:middleware){ Storehouse::Middleware.new(app) }
 
@@ -71,5 +74,17 @@ describe Storehouse::Middleware do
     middleware.should_receive(:attempt_to_store).never
     Storehouse.should_receive(:write_file).once
     middleware.call(distribute_request)
+  end
+
+  it 'should not attempt to read from the store if a subdomain is defined' do
+    Storehouse.should_receive(:read).never
+    gem_config(:subdomain)
+    middleware.call(invalid_subdomain_request)
+  end
+
+  it 'should attemt to read if a good subdomain is provided' do
+    Storehouse.should_receive(:read).once
+    gem_config(:subdomain)
+    middleware.call(valid_subdomain_request)
   end
 end
