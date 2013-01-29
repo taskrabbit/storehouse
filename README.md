@@ -94,6 +94,10 @@ Storehouse provides an especially useful tool which allows you to switch your si
 
 If you need to restrict caching to certain subdomains, provide them in the configuration. All other subdomains will be ignored.
 
+## Further Reading
+
+Check out [our blog post about the relase of Storehouse](http://tech.taskrabbit.com/blog/2013/01/04/storehouse/)
+
 ## Contributing
 
 1. Fork it
