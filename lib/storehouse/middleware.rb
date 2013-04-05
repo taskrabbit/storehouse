@@ -123,7 +123,7 @@ module Storehouse
     def valid_subdomain?(env)
       return true if Storehouse.subdomains.length == 0
       regex = /(^|\.)(#{Storehouse.subdomains.join('|')})\./
-      !(env['HTTP_HOST'] =~ regex)
+      !!(env['HTTP_HOST'] =~ regex)
     end
 
     def render_expired?(env)

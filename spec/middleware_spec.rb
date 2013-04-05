@@ -22,8 +22,8 @@ describe Storehouse::Middleware do
     c
   }
 
-  let(:invalid_subdomain_request){ normal_request.merge('HTTP_HOST' => 'a.test.com') }
-  let(:valid_subdomain_request){ normal_request.merge('HTTP_HOST' => 'www.test.com') }
+  let(:valid_subdomain_request){ normal_request.merge('HTTP_HOST' => 'a.test.com') }
+  let(:invalid_subdomain_request){ normal_request.merge('HTTP_HOST' => 'd.test.com') }
 
   let(:app){ lambda{|req| send(req['response']) } }
   let(:middleware){ Storehouse::Middleware.new(app) }
@@ -86,5 +86,13 @@ describe Storehouse::Middleware do
     Storehouse.should_receive(:read).once
     gem_config(:subdomain)
     middleware.call(valid_subdomain_request)
+  end
+
+  it 'should determine subdomain validity correct' do
+    Storehouse.stub(:subdomains).and_return(['www'])
+    middleware.send(:valid_subdomain?, {'HTTP_HOST' => 'www.google.com'}).should be_true
+    middleware.send(:valid_subdomain?, {'HTTP_HOST' => 'wwww.google.com'}).should be_false
+    middleware.send(:valid_subdomain?, {'HTTP_HOST' => 'x.google.com'}).should be_false
+
   end
 end
