@@ -14,7 +14,10 @@ module Storehouse
       end
 
       def write(path, hash)
-        @redis.hmset(path, *hash.to_a.flatten)
+        @redis.multi do
+          @redis.hmset(path, *hash.to_a.flatten)
+          @redis.expire(path, backup_expiration)
+        end
       end
 
       def delete(path)
@@ -42,6 +45,17 @@ module Storehouse
       def clear!(namespace = nil)
         @redis.keys("#{namespace}*").each do |key|
           @redis.del(key)
+        end
+      end
+
+      protected
+
+      def backup_expiration
+        known_timeout = (Storehouse.spec['timeouts'] || {})['key_expiration']
+        if known_timeout
+          known_timeout * 2
+        else
+          3600 * 24 * 14
         end
       end
 

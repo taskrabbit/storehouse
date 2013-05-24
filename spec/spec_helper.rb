@@ -116,7 +116,8 @@ RSpec.configure do |config|
 
   def timeout_config
     simple_config.merge!({
-      'timeoutes' => {
+      'timeouts' => {
+        'key_expiration' => 3600 * 24,
         'read' => 0.2,
         'write' => 0.2
       }
