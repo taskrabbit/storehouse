@@ -40,6 +40,20 @@ describe Storehouse::Connections::Redis do
     objectc.should be_blank
   end
 
+  it 'should add an expiration time to all keys written to redis' do
+    true_redis_key = 'test:/some/path.html'
+    store.send(:connection_for).instance_variable_get('@redis').should_receive(:expire).with(true_redis_key, 1209600)
+    objecta = store.write('/some/path', 200, {'My Header' => 'Value'}, 'The actual content')
+  end
+
+  it 'should add an expiration time to all keys written to redis based on the timeout config if present' do
+    gem_config(:timeout, :namespace, :type => :redis)
+    true_redis_key = 'test:/some/path.html'
+    store.send(:connection_for).instance_variable_get('@redis').should_receive(:expire).with(true_redis_key, 3600 * 48)
+    objecta = store.write('/some/path', 200, {'My Header' => 'Value'}, 'The actual content')
+  end
+
+
   it 'should clear all objects' do
     store.clear!
 

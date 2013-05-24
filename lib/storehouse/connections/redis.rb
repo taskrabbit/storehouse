@@ -51,7 +51,7 @@ module Storehouse
       protected
 
       def backup_expiration
-        known_timeout = (Storehouse.spec['timeouts'] || {})['write']
+        known_timeout = (Storehouse.spec['timeouts'] || {})['key_expiration']
         if known_timeout
           known_timeout * 2
         else
