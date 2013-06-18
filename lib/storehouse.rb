@@ -72,6 +72,10 @@ module Storehouse
       spec['subdomain']
     end
 
+    def ignore_headers
+      (spec['ignore_headers'] | ['Set-Cookie'])
+    end
+
     def ignore_params?
       !!spec['ignore_params']
     end

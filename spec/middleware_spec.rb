@@ -56,6 +56,23 @@ describe Storehouse::Middleware do
     middleware.call(cache_request)
   end
 
+  it "should cache the response using headers_to_store but return all headers" do
+    app = lambda do |req|
+      body = "test response"
+
+      [200, {"Content-Type" => "text/plain", "Content-Length" => body.length.to_s, "X-Storehouse" => 32}, [body]]
+    end
+    middleware = Storehouse::Middleware.new(app)
+
+    the_hash = {}
+    middleware.should_receive(:headers_to_store).and_return(the_hash)
+    Storehouse.should_receive(:write).with('/path/for/something', 200, the_hash, 'test response', nil)
+
+    status, headers, content = middleware.call(cache_request)
+
+    headers.keys.should =~ ["Content-Type", "Content-Length"]
+  end
+
   it 'should cache the response with an expiration and drop storehouse headers' do
     Storehouse.should_receive(:write).with('/path/for/something', 200, {}, 'test response', '123456')
     status, headers, content = middleware.call(expire_request)
@@ -94,5 +111,41 @@ describe Storehouse::Middleware do
     middleware.send(:valid_subdomain?, {'HTTP_HOST' => 'wwww.google.com'}).should be_false
     middleware.send(:valid_subdomain?, {'HTTP_HOST' => 'x.google.com'}).should be_false
 
+  end
+
+  describe "#headers_to_store" do
+    let(:middleware) { Storehouse::Middleware.new(app) }
+
+    before do
+      Storehouse.set_spec({
+        'enabled' => true,
+        'ignore_headers' => ['Ignored-Header']
+      })
+    end
+
+    it "excludes storehouse headers" do
+      middleware.send(:headers_to_store, {
+        "X-Storehouse"            => 'test',
+        "X-Storehouse-Expires-At" => "test"
+      }).should == {}
+    end
+
+    it "excludes Set-Cookie" do
+      middleware.send(:headers_to_store, {
+        "Set-Cookie" => 'test'
+      }).should == {}
+    end
+
+    it "excludes ignore_headers from configuration" do
+      middleware.send(:headers_to_store, {
+        "Ignored-Header" => 'value'
+      }).should == {}
+    end
+
+    it "does not exclude the rest" do
+      middleware.send(:headers_to_store, {
+        "Other-Header" => 'value'
+      }).should == { "Other-Header" => 'value' }
+    end
   end
 end

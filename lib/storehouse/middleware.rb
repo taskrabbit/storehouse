@@ -77,7 +77,7 @@ module Storehouse
 
         observe_panic_mode(headers)
 
-        Storehouse.write(path, status, headers.except(*STOREHOUSE_HEADERS), string_content(content), expiration)
+        Storehouse.write(path, status, headers_to_store(headers), string_content(content), expiration)
       end
 
       [status, headers, content]
@@ -100,6 +100,13 @@ module Storehouse
     def strip_storehouse_headers(response)
       response[1].except!('X-Storehouse-Distribute', *STOREHOUSE_HEADERS)
       response
+    end
+
+    def headers_to_store(headers)
+      ignored_headers = headers.except(*STOREHOUSE_HEADERS)
+      ignored_headers = ignored_headers.except(*Storehouse.ignore_headers)
+
+      ignored_headers
     end
 
     def strip_reheat_params(env)

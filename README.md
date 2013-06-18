@@ -64,6 +64,7 @@ With this simple config you'll be up and running. The rest of the options are sh
       ignore_params: false                   # serve cached content to requests with query strings
       serve_expired_content_to: Bot          # the user agent matcher for serving expired content
       panic_path: 'public/panic.txt'         # the relative path (from project root) for a panic file
+      ignore_headers: [Set-Cookie, Other]    # headers to strip during storage, by default [Set-Cookie]
 
 
 ### namespace
