@@ -62,9 +62,9 @@ With this simple config you'll be up and running. The rest of the options are sh
       reheat_param: reheat_cache             # the param to pass to reheat the cache manually
       postpone: false                        # when encountering an expired page, defer the expiration for other users
       ignore_params: false                   # serve cached content to requests with query strings
+      ignore_headers: [Set-Cookie, Other]    # headers to strip during storage, by default [Set-Cookie]
       serve_expired_content_to: Bot          # the user agent matcher for serving expired content
       panic_path: 'public/panic.txt'         # the relative path (from project root) for a panic file
-      ignore_headers: [Set-Cookie, Other]    # headers to strip during storage, by default [Set-Cookie]
 
 
 ### namespace
@@ -82,6 +82,10 @@ Postponing is a technique Storehouse uses to keep your app from undergoing an av
 ### ignore_params
 
 If this is set to `true`, Storehouse will serve cached content even if params are passed. This is especially useful for utm-like params or params which are handled in a previous middleware and essentially ignored in your app.
+
+### ignore_headers
+
+When storehouse stores a request it includes the headers. Some headers like 'Set-Cookie' should not be stored. If you have a custom header that is relevant to the current session but no other, add it to this list.
 
 ### serve_expired_content_to
 
