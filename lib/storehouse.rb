@@ -73,6 +73,7 @@ module Storehouse
     end
 
     def ignore_headers
+      return ['Set-Cookie'] unless spec['ignore_headers']
       (spec['ignore_headers'] | ['Set-Cookie'])
     end
 
