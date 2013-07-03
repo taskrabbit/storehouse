@@ -20,7 +20,7 @@ module Storehouse
   class << self
 
     %w(read write delete expire postpone clear! clean!).each do |meth|
-      class_eval <<-EV
+      class_eval <<-EV, __FILE__, __LINE__+1
         def #{meth}(*args)
           return nil unless self.enabled?
           self.store.try(:#{meth}, *args)

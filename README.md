@@ -3,40 +3,58 @@
 [![Build Status](https://secure.travis-ci.org/taskrabbit/storehouse.png)](http://travis-ci.org/taskrabbit/storehouse)
 
 
-Storehouse provides a rack middleware which provides access to a centralized cache store. The cache store is up to you, we've used Redis and Riak in production environments without issue. Storehouse aims to be a lightweight and simple middleware which relies solely on simple configuration files and is completely unaware of app frameworks.
+Storehouse is a rack middleware which provides read and write access to a centralized page cache store. The store itself is up to you, we've used Redis and Riak in production without issue. Storehouse aims to be a lightweight and simple middleware which relies solely on simple configuration files.
 
 
 ## Installation
 
 Add storehouse to your Gemfile:
 
-    gem 'storehouse', :git => 'git@github.com:taskrabbit/storehouse.git', :tag => 'v0.1.3'
+```ruby
+gem 'storehouse', :git => 'git@github.com:taskrabbit/storehouse.git', :tag => 'v0.1.8'
+```
 
 
-If you're running a railtie enabled version of rails, you're all set. For all other rack apps you'll have to insert the Storehouse::Middleware:
+If you're running a railtie enabled version of rails, you're all set. For all other rack apps you'll have to add the Storehouse::Middleware:
 
-    config.middleware.add 'Storehouse::Middleware'
+```ruby
+config.middleware.add 'Storehouse::Middleware'
+```
 
 ## Invoking the Middleware
 
-Getting Storehouse to cache content is as simple as adding a header (or two). To make Storehouse push the rendered content into the backend, add a `X-Storehouse` header with a string value of `'1'`:
+Tell Storehouse to cache the page by adding a header (or two). The first header of interest is `X-Storehouse`. `X-Storehouse` should be given the string value of `'1'`. This will tell the middleware to cache the current response in the backend of your choice.
 
-    response.headers['X-Storehouse'] = '1' if cache_page?
+```ruby
+response.headers['X-Storehouse'] = '1' if cache_page?
+```
 
 Optionally, you can pass an expiration time for the content: 
 
-    response.headers['X-Storehouse-Expires-At'] = 10.minutes.from_now.to_i.to_s
+```ruby
+response.headers['X-Storehouse-Expires-At'] = (Time.now + 600).to_i.to_s
+```
 
 You can also tell Storehouse to distribute the content:
 
-    response.headers['X-Storehouse-Distribute'] = '1'
+```ruby
+response.headers['X-Storehouse-Distribute'] = '1'
+```
 
-These headers will never reach your end user as the are always stripped out.
+These headers will never reach your end user as they are always stripped out.
 
 
 ## Distribution
 
-Distribution is a great way to share cached resources on a multi-box setup. If you would like Storehouse to distribute the rendered page across all boxes, simply add the `X-Storehouse-Distribute` header. This will do three things: 1) Add the content to the backend 2) Mark the content as distributable and 3) Lay the file on the server handling the current request. This means only one server does the work, but your entire system reaps the benefits.
+Distribution is a great way to share cached resources on a multi-server setup. Let's take an example system with 3 servers (A, B, and C). If server A receives a request at `/about-us` and the app provides the response headers:
+  
+```ruby
+response.headers['X-Storehouse'] = '1'
+response.headers['X-Storehouse-Expires-At'] = (Time.now + 600).to_i.to_s
+response.headers['X-Storehouse-Distribute'] = '1'
+```
+
+Then before finalizing the request, storehouse will do two things 1) store that content in the backend of your choice 2) write that content to disk so you can serve it directly from the filesystem the next time this server is hit.
 
 ## Configuration
 

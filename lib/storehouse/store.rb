@@ -18,6 +18,7 @@ module Storehouse
     end
 
 
+    # get a storehouse object out of the cache
     def read(path)
       execute(:read) do
         response = connection_for(path).read(storage_path(path)) || {}
@@ -27,6 +28,9 @@ module Storehouse
       end
     end
 
+
+    # write request attributes to the cache store by creating
+    # a storehouse object
     def write(path, status, headers, content, expires_at = nil)
       object = ::Storehouse::Object.new(
         :path       => path, 
@@ -39,6 +43,8 @@ module Storehouse
       write_object(path, object)
     end
 
+
+    # write a storehouse object to the cache store
     def write_object(path, object)
       execute(:write) do
         hash = object.to_h.except(:path)
@@ -46,6 +52,8 @@ module Storehouse
       end
     end
 
+
+    # remove the content from the cache
     def delete(path)
       execute(:delete) do
         response = connection_for(path).delete(storage_path(path)) || {}
@@ -53,6 +61,9 @@ module Storehouse
       end
     end
 
+
+    # expire content at a certain path
+    # this does not remove the content from the cache
     def expire(path)
       object = read(path)
       
@@ -62,6 +73,10 @@ module Storehouse
       write_object(path, object)
     end
 
+
+    # pushes back expiration to 10 seconds from now
+    # this is valuable for bypassing avalanches
+    # returns the original object 
     def postpone(object)
       if object.expired?
         object.expires_at = Time.now.to_i + 10
@@ -70,6 +85,7 @@ module Storehouse
       object
     end
 
+    # clears all the content
     def clear!
       execute(:clear, 60) do
         prefix = namespaced_path('')
@@ -78,6 +94,7 @@ module Storehouse
       end
     end
 
+    # removes all the expired content
     def clean!
       execute(:clean, 60) do
         prefix = namespaced_path('')
@@ -89,6 +106,8 @@ module Storehouse
 
     protected
 
+
+    # execute the block with a timeout based on the type of activity
     def execute(kind, default_timeout = 5)
       timeout = @timeouts[kind.to_s] || default_timeout
 
@@ -107,10 +126,12 @@ module Storehouse
       @connection ||= self.class.get_connection(@spec)
     end
 
+    # the storage path of the content with a file extension
     def storage_path(path)
       Storehouse.endpoint_path(namespaced_path(path))
     end
 
+    # the path with the storehouse namespace included
     def namespaced_path(path)
       [Storehouse.namespace, path].compact.join(':')
     end
